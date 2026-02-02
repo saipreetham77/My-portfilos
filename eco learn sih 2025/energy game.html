@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Revolution - Build Your Green Grid</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 90%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 2.8em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .energy-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            margin: 25px 0;
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .grid-cell {
+            aspect-ratio: 1;
+            background: #bdc3c7;
+            border: 2px solid #95a5a6;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            border-radius: 5px;
+        }
+
+        .grid-cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .grid-cell.powered {
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
+        }
+
+        .energy-source {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            border-radius: 5px;
+        }
+
+        .solar { background: linear-gradient(135deg, #f39c12, #f1c40f); }
+        .wind { background: linear-gradient(135deg, #3498db, #5dade2); }
+        .hydro { background: linear-gradient(135deg, #2980b9, #3498db); }
+        .geothermal { background: linear-gradient(135deg, #e74c3c, #ec7063); }
+        .battery { background: linear-gradient(135deg, #9b59b6, #bb8fce); }
+        .transmission { background: linear-gradient(135deg, #34495e, #5d6d7e); }
+
+        .building-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 25px 0;
+        }
+
+        .energy-option {
+            background: white;
+            border: 3px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .energy-option:hover {
+            border-color: #3498db;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .energy-option.selected {
+            border-color: #2980b9;
+            background: #ebf3fd;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.5);
+        }
+
+        .energy-icon {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        .energy-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+
+        .energy-cost {
+            color: #27ae60;
+            font-size: 0.9em;
+        }
+
+        .energy-output {
+            color: #e74c3c;
+            font-size: 0.8em;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .demo-btn {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .info-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #3498db;
+        }
+
+        .info-title {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+        }
+
+        .message.show {
+            transform: translateX(0);
+        }
+
+        .message.success {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+
+        .message.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .message.error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .power-indicator {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .powered .power-indicator {
+            opacity: 1;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .energy-grid {
+                grid-template-columns: repeat(8, 1fr);
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .building-panel {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>⚡ Energy Revolution</h1>
+        <p class="subtitle">Build your sustainable power grid and light up the city!</p>
+        
+        <div class="stats-panel">
+            <div class="stat-card">
+                <div class="stat-label">💰 Budget</div>
+                <div class="stat-value" id="budget">$5000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">⚡ Power Output</div>
+                <div class="stat-value" id="powerOutput">0 MW</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🏙️ City Demand</div>
+                <div class="stat-value" id="cityDemand">100 MW</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🌱 Green Score</div>
+                <div class="stat-value" id="greenScore">0</div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-title">🎯 Mission</div>
+            <p>Build renewable energy sources to power the city! Connect power plants with transmission lines and use batteries to store excess energy. Reach 100% green energy to win!</p>
+        </div>
+
+        <div class="building-panel">
+            <div class="energy-option selected" data-type="solar">
+                <div class="energy-icon">☀️</div>
+                <div class="energy-name">Solar Farm</div>
+                <div class="energy-cost">$500</div>
+                <div class="energy-output">15 MW</div>
+            </div>
+            <div class="energy-option" data-type="wind">
+                <div class="energy-icon">💨</div>
+                <div class="energy-name">Wind Turbine</div>
+                <div class="energy-cost">$750</div>
+                <div class="energy-output">20 MW</div>
+            </div>
+            <div class="energy-option" data-type="hydro">
+                <div class="energy-icon">💧</div>
+                <div class="energy-name">Hydro Plant</div>
+                <div class="energy-cost">$1200</div>
+                <div class="energy-output">30 MW</div>
+            </div>
+            <div class="energy-option" data-type="geothermal">
+                <div class="energy-icon">🌋</div>
+                <div class="energy-name">Geothermal</div>
+                <div class="energy-cost">$1500</div>
+                <div class="energy-output">25 MW</div>
+            </div>
+            <div class="energy-option" data-type="battery">
+                <div class="energy-icon">🔋</div>
+                <div class="energy-name">Battery</div>
+                <div class="energy-cost">$300</div>
+                <div class="energy-output">Stores 50 MW</div>
+            </div>
+            <div class="energy-option" data-type="transmission">
+                <div class="energy-icon">🔌</div>
+                <div class="energy-name">Power Line</div>
+                <div class="energy-cost">$50</div>
+                <div class="energy-output">Connects grid</div>
+            </div>
+        </div>
+
+        <div class="energy-grid" id="energyGrid"></div>
+
+        <div class="control-buttons">
+            <button class="control-btn demo-btn" onclick="showDemo()">📖 Tutorial</button>
+            <button class="control-btn reset-btn" onclick="resetGrid()">🔄 Reset Grid</button>
+        </div>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <script>
+        class EnergyRevolutionGame {
+            constructor() {
+                this.gridSize = 80;
+                this.grid = Array(this.gridSize).fill(null);
+                this.budget = 5000;
+                this.powerOutput = 0;
+                this.cityDemand = 100;
+                this.greenScore = 0;
+                this.selectedType = 'solar';
+                this.poweredCells = new Set();
+                
+                this.energyTypes = {
+                    solar: { cost: 500, output: 15, emoji: '☀️', name: 'Solar Farm', greenPoints: 10 },
+                    wind: { cost: 750, output: 20, emoji: '💨', name: 'Wind Turbine', greenPoints: 15 },
+                    hydro: { cost: 1200, output: 30, emoji: '💧', name: 'Hydro Plant', greenPoints: 20 },
+                    geothermal: { cost: 1500, output: 25, emoji: '🌋', name: 'Geothermal', greenPoints: 18 },
+                    battery: { cost: 300, output: 0, emoji: '🔋', name: 'Battery', greenPoints: 5, storage: 50 },
+                    transmission: { cost: 50, output: 0, emoji: '🔌', name: 'Power Line', greenPoints: 0 }
+                };
+
+                this.initGrid();
+                this.setupEventListeners();
+                this.updateDisplay();
+            }
+
+            initGrid() {
+                const gridElement = document.getElementById('energyGrid');
+                gridElement.innerHTML = '';
+                
+                for (let i = 0; i < this.gridSize; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.dataset.index = i;
+                    cell.onclick = () => this.placeEnergySource(i);
+                    
+                    const indicator = document.createElement('div');
+                    indicator.className = 'power-indicator';
+                    cell.appendChild(indicator);
+                    
+                    gridElement.appendChild(cell);
+                }
+            }
+
+            setupEventListeners() {
+                document.querySelectorAll('.energy-option').forEach(option => {
+                    option.onclick = () => {
+                        document.querySelectorAll('.energy-option').forEach(o => o.classList.remove('selected'));
+                        option.classList.add('selected');
+                        this.selectedType = option.dataset.type;
+                    };
+                });
+            }
+
+            placeEnergySource(index) {
+                if (this.grid[index]) {
+                    this.showMessage('Cell already occupied!', 'warning');
+                    return;
+                }
+
+                const energyType = this.energyTypes[this.selectedType];
+                
+                if (this.budget < energyType.cost) {
+                    this.showMessage('Not enough budget!', 'error');
+                    return;
+                }
+
+                this.budget -= energyType.cost;
+                this.grid[index] = this.selectedType;
+                
+                if (energyType.output > 0) {
+                    this.powerOutput += energyType.output;
+                    this.greenScore += energyType.greenPoints;
+                }
+                
+                this.updatePowerGrid();
+                this.updateDisplay();
+                this.checkWinCondition();
+                
+                this.showMessage(`${energyType.emoji} ${energyType.name} built!`, 'success');
+            }
+
+            updatePowerGrid() {
+                this.poweredCells.clear();
+                
+                // Simple power propagation algorithm
+                const energySources = [];
+                this.grid.forEach((type, index) => {
+                    if (type && this.energyTypes[type].output > 0) {
+                        energySources.push(index);
+                    }
+                });
+
+                // Power connected cells
+                energySources.forEach(sourceIndex => {
+                    this.propagatePower(sourceIndex);
+                });
+
+                // Update visual indicators
+                document.querySelectorAll('.grid-cell').forEach((cell, index) => {
+                    if (this.poweredCells.has(index)) {
+                        cell.classList.add('powered');
+                    } else {
+                        cell.classList.remove('powered');
+                    }
+                    
+                    if (this.grid[index]) {
+                        const energyType = this.energyTypes[this.grid[index]];
+                        cell.querySelector('.energy-source')?.remove();
+                        const source = document.createElement('div');
+                        source.className = `energy-source ${this.grid[index]}`;
+                        source.textContent = energyType.emoji;
+                        cell.appendChild(source);
+                    }
+                });
+            }
+
+            propagatePower(startIndex) {
+                const visited = new Set();
+                const queue = [startIndex];
+                
+                while (queue.length > 0) {
+                    const current = queue.shift();
+                    if (visited.has(current)) continue;
+                    
+                    visited.add(current);
+                    this.poweredCells.add(current);
+                    
+                    // Check adjacent cells
+                    const neighbors = this.getNeighbors(current);
+                    neighbors.forEach(neighbor => {
+                        if (!visited.has(neighbor) && this.grid[neighbor] !== null) {
+                            queue.push(neighbor);
+                        }
+                    });
+                }
+            }
+
+            getNeighbors(index) {
+                const neighbors = [];
+                const row = Math.floor(index / 10);
+                const col = index % 10;
+                
+                // Up
+                if (row > 0) neighbors.push(index - 10);
+                // Down
+                if (row < 7) neighbors.push(index + 10);
+                // Left
+                if (col > 0) neighbors.push(index - 1);
+                // Right
+                if (col < 9) neighbors.push(index + 1);
+                
+                return neighbors;
+            }
+
+            checkWinCondition() {
+                const poweredPowerPlants = Array.from(this.poweredCells).filter(index => {
+                    const type = this.grid[index];
+                    return type && this.energyTypes[type].output > 0;
+                }).length;
+
+                if (this.powerOutput >= this.cityDemand && poweredPowerPlants > 0) {
+                    this.showMessage(`🎉 Congratulations! You've powered the city with ${this.powerOutput} MW of green energy!`, 'success');
+                    setTimeout(() => {
+                        this.cityDemand += 50;
+                        this.showMessage(`🏙️ City is growing! New demand: ${this.cityDemand} MW`, 'success');
+                    }, 3000);
+                }
+            }
+
+            updateDisplay() {
+                document.getElementById('budget').textContent = `$${this.budget}`;
+                document.getElementById('powerOutput').textContent = `${this.powerOutput} MW`;
+                document.getElementById('cityDemand').textContent = `${this.cityDemand} MW`;
+                document.getElementById('greenScore').textContent = this.greenScore;
+            }
+
+            showMessage(text, type) {
+                const message = document.getElementById('message');
+                message.textContent = text;
+                message.className = `message ${type} show`;
+                
+                setTimeout(() => {
+                    message.classList.remove('show');
+                }, 3000);
+            }
+
+            showDemo() {
+                this.showMessage('💡 Start by placing Solar Farms or Wind Turbines, then connect them with Power Lines!', 'success');
+            }
+
+            resetGrid() {
+                this.grid = Array(this.gridSize).fill(null);
+                this.budget = 5000;
+                this.powerOutput = 0;
+                this.greenScore = 0;
+                this.poweredCells.clear();
+                
+                document.querySelectorAll('.grid-cell').forEach(cell => {
+                    cell.classList.remove('powered');
+                    cell.innerHTML = '<div class="power-indicator"></div>';
+                });
+                
+                this.updateDisplay();
+                this.showMessage('Grid reset! Start building your energy empire!', 'success');
+            }
+        }
+
+        // Initialize the game
+        const game = new EnergyRevolutionGame();
+
+        // Global functions for buttons
+        function showDemo() {
+            game.showDemo();
+        }
+
+        function resetGrid() {
+            game.resetGrid();
+        }
+    </script>
+</body>
+</html>

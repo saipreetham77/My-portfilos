@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Education Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c5530;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #2c5530, #4CAF50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(45deg, #2c5530, #4CAF50);
+            transform: translateY(-1px);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .flashcard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .flashcard {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            perspective: 1000px;
+            height: 250px;
+        }
+
+        .flashcard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #81C784, #4CAF50);
+            color: white;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #2c5530;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #4CAF50;
+            background: #f1f8e9;
+        }
+
+        .option.selected {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+
+        .option.correct {
+            border-color: #4CAF50;
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .quiz-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .quiz-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .quiz-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            color: #2c5530;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #81C784);
+            transition: width 0.5s ease;
+            border-radius: 5px;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-5px);
+            border-color: #4CAF50;
+        }
+
+        .activity-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+
+        .tips-list {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .tip-item:last-child {
+            border-bottom: none;
+        }
+
+        .tip-item:hover {
+            background: #f1f8e9;
+            border-radius: 10px;
+            padding-left: 10px;
+        }
+
+        .tip-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            color: #4CAF50;
+        }
+
+        .reset-btn {
+            float: right;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Environmental Education Hub</h1>
+        <p class="subtitle">Learn, Explore, and Protect Our Planet</p>
+        
+        <div class="nav-buttons">
+            <button class="nav-btn active" onclick="showSection('flashcards')">📚 Flashcards</button>
+            <button class="nav-btn" onclick="showSection('quiz')">🧠 Quiz Challenge</button>
+            <button class="nav-btn" onclick="showSection('activities')">🎯 Activities</button>
+            <button class="nav-btn" onclick="showSection('tips')">💡 Green Tips</button>
+        </div>
+
+        <div id="flashcards" class="section active">
+            <h2>🃏 Environmental Flashcards</h2>
+            <p>Click on any card to flip it and learn more!</p>
+            <div class="flashcard-container">
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-icon">🌡️</div>
+                            <div class="card-title">Climate Change</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-description">Long-term changes in Earth's climate caused by increased greenhouse gases from human activities like burning fossil fuels and deforestation.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-icon">♻️</div>
+                            <div class="card-title">Recycling</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-description">The process of converting waste materials into reusable materials to prevent waste and reduce consumption of fresh raw materials.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-icon">🌿</div>
+                            <div class="card-title">Biodiversity</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-description">The variety of life on Earth, including different species of plants, animals, and microorganisms, and the ecosystems they form.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-icon">🏭</div>
+                            <div class="card-title">Carbon Footprint</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-description">The amount of greenhouse gases produced by human activities, measured in units of carbon dioxide equivalent.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-icon">🌊</div>
+                            <div class="card-title">Water Conservation</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-description">The practice of using water efficiently to reduce unnecessary water usage and preserve water for future generations.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-icon">☀️</div>
+                            <div class="card-title">Solar Energy</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-description">Clean, renewable energy from the sun that can be converted into electricity or heat without producing harmful emissions.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-icon">🌳</div>
+                            <div class="card-title">Deforestation</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-description">The permanent removal of forests for agriculture, urban development, or logging, leading to habitat loss and climate change.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-icon">🐝</div>
+                            <div class="card-title">Ecosystem Services</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-description">Benefits that humans derive from ecosystems, including clean air and water, pollination, climate regulation, and natural resources.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="quiz" class="section">
+            <h2>🧠 Environmental Quiz Challenge</h2>
+            <button class="reset-btn" onclick="resetQuiz()">Reset Quiz</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="score" id="score">Score: 0/0</div>
+            <div class="quiz-container" id="quizContainer">
+                <!-- Quiz questions will be loaded here -->
+            </div>
+        </div>
+
+        <div id="activities" class="section">
+            <h2>🎯 Environmental Activities</h2>
+            <p>Engage with these hands-on activities to deepen your environmental knowledge!</p>
+            <div class="activity-grid">
+                <div class="activity-card">
+                    <div class="activity-icon">🌱</div>
+                    <h3>Start a Garden</h3>
+                    <p>Plant native species in your yard or create a small indoor herb garden. Learn about local ecosystems and food production.</p>
+                </div>
+                
+                <div class="activity-card">
+                    <div class="activity-icon">📊</div>
+                    <h3>Track Your Footprint</h3>
+                    <p>Monitor your daily water, energy, and waste production for a week. Create charts to visualize your environmental impact.</p>
+                </div>
+                
+                <div class="activity-card">
+                    <div class="activity-icon">🔍</div>
+                    <h3>Biodiversity Survey</h3>
+                    <p>Conduct a species count in your local park or neighborhood. Document different plants, birds, and insects you observe.</p>
+                </div>
+                
+                <div class="activity-card">
+                    <div class="activity-icon">🏗️</div>
+                    <h3>Build a Rain Gauge</h3>
+                    <p>Create a simple rain gauge to measure precipitation and learn about the water cycle and climate patterns.</p>
+                </div>
+                
+                <div class="activity-card">
+                    <div class="activity-icon">🎨</div>
+                    <h3>Upcycling Project</div>
+                    <p>Transform waste materials into useful items. Learn about waste reduction and creative reuse of materials.</p>
+                </div>
+                
+                <div class="activity-card">
+                    <div class="activity-icon">🌍</div>
+                    <h3>Energy Audit</h3>
+                    <p>Examine your home's energy use. Identify areas for improvement and calculate potential savings from efficiency measures.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tips" class="section">
+            <h2>💡 Daily Green Living Tips</h2>
+            <p>Simple actions you can take every day to help protect our environment!</p>
+            <div class="tips-list">
+                <div class="tip-item">
+                    <span class="tip-icon">💡</span>
+                    <span>Switch to LED light bulbs to reduce energy consumption by up to 80%</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🚗</span>
+                    <span>Walk, bike, or use public transportation to reduce your carbon footprint</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🚿</span>
+                    <span>Take shorter showers and fix leaky faucets to conserve water</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🛍️</span>
+                    <span>Bring reusable bags when shopping to reduce plastic waste</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🌿</span>
+                    <span>Choose locally grown, organic food to support sustainable agriculture</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">📱</span>
+                    <span>Unplug electronics when not in use to eliminate phantom energy draw</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🗞️</span>
+                    <span>Recycle paper, plastic, glass, and metal according to local guidelines</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">💧</span>
+                    <span>Collect rainwater for watering plants and gardens</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🌳</span>
+                    <span>Plant trees and support reforestation efforts in your community</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">♻️</span>
+                    <span>Compost organic waste to create nutrient-rich soil for plants</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        let quizCompleted = false;
+
+        const quizQuestions = [
+            {
+                question: "What is the main cause of current climate change?",
+                options: ["Natural weather cycles", "Solar radiation changes", "Human activities and greenhouse gases", "Volcanic eruptions"],
+                correct: 2
+            },
+            {
+                question: "Which of these is a renewable energy source?",
+                options: ["Coal", "Natural gas", "Nuclear power", "Solar power"],
+                correct: 3
+            },
+            {
+                question: "What does biodiversity refer to?",
+                options: ["The variety of life on Earth", "Only endangered species", "Only plant species", "Only marine life"],
+                correct: 0
+            },
+            {
+                question: "Which gas contributes most to the greenhouse effect?",
+                options: ["Oxygen", "Nitrogen", "Carbon dioxide", "Hydrogen"],
+                correct: 2
+            },
+            {
+                question: "What is the 3 R's of waste management?",
+                options: ["Read, Write, Research", "Reduce, Reuse, Recycle", "Run, Rest, Repeat", "Rain, Rivers, Resources"],
+                correct: 1
+            },
+            {
+                question: "How much of Earth's surface is covered by oceans?",
+                options: ["About 50%", "About 60%", "About 71%", "About 80%"],
+                correct: 2
+            },
+            {
+                question: "Which ecosystem is known as the 'lungs of the Earth'?",
+                options: ["Deserts", "Grasslands", "Rainforests", "Tundra"],
+                correct: 2
+            },
+            {
+                question: "What is composting?",
+                options: ["Burning waste", "Burying waste in water", "Decomposing organic matter naturally", "Recycling plastic"],
+                correct: 2
+            }
+        ];
+
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from all nav buttons
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Initialize quiz if quiz section is selected
+            if (sectionId === 'quiz' && !quizCompleted) {
+                loadQuestion();
+            }
+        }
+
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= quizQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const question = quizQuestions[currentQuestionIndex];
+            const quizContainer = document.getElementById('quizContainer');
+            
+            quizContainer.innerHTML = `
+                <div class="question">${currentQuestionIndex + 1}. ${question.question}</div>
+                <div class="options">
+                    ${question.options.map((option, index) => `
+                        <div class="option" onclick="selectOption(${index})">${option}</div>
+                    `).join('')}
+                </div>
+                <button class="quiz-btn" onclick="checkAnswer()" disabled id="checkBtn">Check Answer</button>
+                <button class="quiz-btn" onclick="nextQuestion()" style="display: none;" id="nextBtn">Next Question</button>
+            `;
+
+            updateProgress();
+            selectedAnswer = null;
+        }
+
+        function selectOption(index) {
+            // Remove previous selections
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Select current option
+            options[index].classList.add('selected');
+            selectedAnswer = index;
+            
+            // Enable check button
+            document.getElementById('checkBtn').disabled = false;
+        }
+
+        function checkAnswer() {
+            if (selectedAnswer === null) return;
+            
+            const question = quizQuestions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            // Show correct/incorrect styling
+            options.forEach((option, index) => {
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedAnswer && index !== question.correct) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Update score
+            if (selectedAnswer === question.correct) {
+                score++;
+            }
+            
+            // Show next button, hide check button
+            document.getElementById('checkBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            
+            updateScore();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestionIndex / quizQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = `Score: ${score}/${currentQuestionIndex + 1}`;
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / quizQuestions.length) * 100);
+            let message = '';
+            
+            if (percentage >= 80) {
+                message = '🌟 Excellent! You\'re an environmental champion!';
+            } else if (percentage >= 60) {
+                message = '👍 Great job! You have good environmental knowledge!';
+            } else if (percentage >= 40) {
+                message = '📚 Not bad! Keep learning about our environment!';
+            } else {
+                message = '🌱 Keep studying! Every step towards environmental awareness counts!';
+            }
+            
+            document.getElementById('quizContainer').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="color: #2c5530; margin-bottom: 20px;">Quiz Complete!</h3>
+                    <div style="font-size: 2em; margin: 20px 0;">${message}</div>
+                    <div style="font-size: 1.5em; color: #4CAF50; margin: 20px 0;">
+                        Your Score: ${score}/${quizQuestions.length} (${percentage}%)
+                    </div>
+                    <button class="quiz-btn" onclick="resetQuiz()">Take Quiz Again</button>
+                </div>
+            `;
+            
+            quizCompleted = true;
+            updateProgress();
+        }
+
+        function resetQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswer = null;
+            quizCompleted = false;
+            document.getElementById('score').textContent = 'Score: 0/0';
+            document.getElementById('progressFill').style.width = '0%';
+            loadQuestion();
+        }
+
+        // Initialize the quiz when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Quiz will be loaded when the quiz tab is first clicked
+        });
+    </script>
+</body>
+</html>

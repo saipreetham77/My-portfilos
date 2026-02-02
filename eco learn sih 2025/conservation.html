@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Conservation Quiz | 20 Questions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* GLOBAL */
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#000;
+      overflow:hidden;
+    }
+
+    /* SLIDESHOW BACKGROUND */
+    .bg-slideshow{
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      z-index:-2;
+    }
+    .bg-slide{
+      position:absolute;
+      width:100%;height:100%;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      animation:slideShow 24s infinite;
+    }
+    .bg-slide:nth-child(1){animation-delay:0s}
+    .bg-slide:nth-child(2){animation-delay:6s}
+    .bg-slide:nth-child(3){animation-delay:12s}
+    .bg-slide:nth-child(4){animation-delay:18s}
+
+    @keyframes slideShow{
+      0%,20%{opacity:1}
+      25%,100%{opacity:0}
+    }
+
+    /* OVERLAY FOR READABILITY */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:-1;
+    }
+
+    /* QUIZ CARD */
+    .quiz-card{
+      width:90%;max-width:700px;
+      background:rgba(255,255,255,.92);
+      border-radius:20px;
+      padding:35px 30px;
+      box-shadow:0 15px 40px rgba(0,0,0,.5);
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    header{
+      text-align:center;
+    }
+    header h1{font-size:2.1rem;color:#0d3b66}
+    header p{font-size:1rem;color:#555}
+
+    /* PROGRESS */
+    .progress-bar{
+      height:10px;border-radius:5px;background:#ddd;overflow:hidden;
+    }
+    .progress-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#27ae60 0%, #2ecc71 100%);
+      transition:width .4s ease;
+    }
+
+    /* QUESTION */
+    .question-box{
+      min-height:90px;
+    }
+    .question-text{
+      font-size:1.25rem;color:#222;line-height:1.4
+    }
+    .question-img{
+      width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-top:10px;
+    }
+
+    /* OPTIONS */
+    .options{
+      display:grid;gap:12px;
+    }
+    .option-btn{
+      background:#fff;border:2px solid #ccc;border-radius:10px;padding:14px;font-size:1rem;cursor:pointer;transition:.25s;
+    }
+    .option-btn:hover{border-color:#27ae60;transform:translateY(-2px)}
+    .option-btn.correct{border-color:#27ae60;background:#d4edda}
+    .option-btn.incorrect{border-color:#e63946;background:#f8d7da}
+    .option-btn:disabled{cursor:not-allowed;opacity:.8}
+
+    /* NAV */
+    .nav{
+      display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+    }
+    .nav button{
+      border:none;border-radius:25px;padding:10px 22px;font-size:1rem;cursor:pointer;transition:.3s;
+    }
+    #prevBtn{background:#95a5a6;color:#fff}
+    #nextBtn{background:#27ae60;color:#fff}
+    #nextBtn:disabled{background:#95a5a6;cursor:not-allowed}
+    .score-display{font-weight:600;color:#0d3b66}
+
+    /* RESULTS */
+    .result-screen{
+      text-align:center;display:none;
+    }
+    .result-screen h2{font-size:2rem;margin-bottom:15px;color:#0d3b66}
+    .result-screen p{font-size:1.1rem;margin-bottom:20px;color:#444}
+    #restartBtn{background:#27ae60;color:#fff;border:none;border-radius:25px;padding:12px 28px;font-size:1rem;cursor:pointer}
+
+    /* RESPONSIVE */
+    @media(max-width:600px){
+      .quiz-card{padding:25px 20px}
+      header h1{font-size:1.7rem}
+      .question-text{font-size:1.1rem}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background slideshow -->
+  <div class="bg-slideshow">
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1441973101538-656170777609?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1504553101394-27b293796dcc?auto=format&fit=crop&w=1350&q=80');"></div>
+  </div>
+  <div class="overlay"></div>
+
+  <!-- Quiz Card -->
+  <div class="quiz-card">
+    <header>
+      <h1>🌱 Conservation Quiz</h1>
+      <p>Test your knowledge on protecting Earth's resources & wildlife</p>
+    </header>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="question-box">
+      <div class="question-text" id="questionText"></div>
+      <img class="question-img" id="questionImg" alt="question image">
+    </div>
+
+    <div class="options" id="optionsContainer"></div>
+
+    <div class="nav">
+      <button id="prevBtn" onclick="navigate(-1)">← Prev</button>
+      <span class="score-display">Score: <span id="score">0</span>/20</span>
+      <button id="nextBtn" onclick="navigate(1)" disabled>Next →</button>
+    </div>
+
+    <div class="result-screen" id="resultScreen">
+      <h2 id="resultTitle"></h2>
+      <p id="resultMsg"></p>
+      <button id="restartBtn" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+  </div>
+
+  <script>
+    /* ===== CONSERVATION QUESTION BANK (20 Questions) ===== */
+    const questions=[
+      {
+        q:"What does the 3Rs principle stand for in waste management?",
+        img:"https://images.unsplash.com/photo-1441973101538-656170777609?auto=format&fit=crop&w=800&q=60",
+        opts:["Remove, Reduce, Recycle","Reuse, Remove, Replant","Reduce, Reuse, Recycle","Recycle, Reject, Remove"],
+        correct:2,
+        fact:"3Rs = Reduce (use less), Reuse (again), Recycle (process into new products)."
+      },
+      {
+        q:"Which action saves the most water per instance?",
+        img:"https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=800&q=60",
+        opts:["Turning off tap while brushing","Fixing a leaky faucet","Taking a 5-min shower vs 10-min","Watering lawn at midday"],
+        correct:1,
+        fact:"A dripping tap can waste > 3 000 L/year—far more than shorter showers each time."
+      },
+      {
+        q:"What is the most effective personal action to reduce carbon footprint?",
+        img:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=60",
+        opts:["Using LED bulbs","Recycling paper","Eating less red meat","Unplugging phone charger"],
+        correct:2,
+        fact:"Beef production emits ~60 kg CO₂-eq per kg; cutting red meat has large impact."
+      },
+      {
+        q:"How many times can aluminium be recycled without quality loss?",
+        img:"https://images.unsplash.com/photo-1504553101394-27b293796dcc?auto=format&fit=crop&w=800&q=60",
+        opts:["Once","5–10 times","50 times","Infinitely"],
+        correct:3,
+        fact:"Aluminium is permanently recyclable; recycling saves ~95 % energy vs. primary production."
+      },
+      {
+        q:"What is composting?",
+        img:"https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=800&q=60",
+        opts:["Burning organic waste","Burying waste","Natural decomposition into nutrient-rich soil","Chemical treatment"],
+        correct:2,
+        fact:"Composting turns food & yard waste into humus, reducing landfill methane and fertilising soil."
+      },
+      {
+        q:"Which certification label indicates sustainably sourced wood products?",
+        img:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=60",
+        opts:["Fairtrade","FSC","MSC","Energy Star"],
+        correct:1,
+        fact:"Forest Stewardship Council (FSC) ensures forests are managed environmentally & socially responsibly."
+      },
+      {
+        q:"What is ‘ghost fishing’?",
+        img:"https://images.unsplash.com/photo-1502780216537-1c3b0f2b1f1f?auto=format&fit=crop&w=800&q=60",
+        opts:["Fishing at night","Abandoned gear continuing to trap marine life","Overfishing quotas","Illegal fishing"],
+        correct:1,
+        fact:"Lost nets & lines kill millions of marine animals yearly; retrieval programs mitigate this."
+      },
+      {
+        q:"Which energy-saving behaviour reduces bills the most?",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["Turning thermostat down 1 °C","Leaving lights on LED","Standby mode on TV","Boiling full kettle for one cup"],
+        correct:0,
+        fact:"Lowering heating set-point by 1 °C can cut heating energy ~10 %."
+      },
+      {
+        q:"What is a ‘paperless office’ practice?",
+        img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=60",
+        opts:["No printers allowed","Digital documents & double-sided printing","Recycled paper only","Burning used paper"],
+        correct:1,
+        fact:"Digital workflows and duplex printing save paper, ink and energy."
+      },
+      {
+        q:"Which consumer choice supports biodiversity conservation?",
+        img:"https://images.unsplash.com/photo-1581093458791-9d2fb0d6c7c8?auto=format&fit=crop&w=800&q=60",
+        opts:["Palm-oil products","Single-use plastics","Shade-grown coffee","Fast fashion"],
+        correct:2,
+        fact:"Shade-grown coffee preserves tree canopy habitat for birds & insects vs. sun-coffee monocultures."
+      },
+      {
+        q:"What does ‘precycling’ mean?",
+        img:"https://images.unsplash.com/photo-1589134220273-92116139a67a?auto=format&fit=crop&w=800&q=60",
+        opts:["Recycling early","Avoiding waste before it’s created","Premium recycling","Recycling precious metals"],
+        correct:1,
+        fact:"Precycling = choosing products with minimal packaging or reusable designs to prevent waste."
+      },
+      {
+        q:"Which transport mode has the lowest CO₂ emissions per passenger-km?",
+        img:"https://images.unsplash.com/photo-1574943320219-553eb213f72d?auto=format&fit=crop&w=800&q=60",
+        opts:["Domestic flight","Car (single occupant)","Coach bus","Electric train"],
+        correct:3,
+        fact:"Electric trains powered by renewables emit < 40 g CO₂/pkm vs. > 250 g for cars or planes."
+      },
+      {
+        q:"Reusable bags must be used how many times to outperform single-use plastic bags?",
+        img:"https://images.unsplash.com/photo-1565799557189-1f44d6f0e0d8?auto=format&fit=crop&w=800&q=60",
+        opts:["1–5","10–20","50–150",">500"],
+        correct:2,
+        fact:"Cotton tote needs ~130 uses; thick polypropylene ~10–20 uses to offset production impacts."
+      },
+      {
+        q:"What is ‘citizen science’ in conservation?",
+        img:"https://images.unsplash.com/photo-1602860602133-87972d91c5e2?auto=format&fit=crop&w=800&q=60",
+        opts:["Professional research only","Public participation in data collection","Lab experiments","Policy lobbying"],
+        correct:1,
+        fact:"Apps like iNaturalist let people upload species observations, aiding scientists’ monitoring."
+      },
+      {
+        q:"Which diet shift reduces land-use pressure and emissions?",
+        img:"https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=800&q=60",
+        opts:["More beef","Plant-rich meals","Exotic fruits air-freighted","Processed snacks"],
+        correct:1,
+        fact:"Plant-forward diets require less land and emit fewer GHGs than meat-heavy ones."
+      },
+      {
+        q:"What is the main goal of Earth Hour?",
+        img:"https://images.unsplash.com/photo-1532601224476-15a7d3d100f7?auto=format&fit=crop&w=800&q=60",
+        opts:["Save money","Raise awareness on energy use","Blackout cities","Promote candles"],
+        correct:1,
+        fact:"Switching off lights for one hour symbolises commitment to climate action and conservation."
+      },
+      {
+        q:"Extended producer responsibility (EPR) means:",
+        img:"https://images.unsplash.com/photo-1563729783894-93a3976d5c3d?auto=format&fit=crop&w=800&q=60",
+        opts:["Consumers pay disposal fees","Manufacturers manage post-consumer products","Government recycles all waste","Retailers collect packaging"],
+        correct:1,
+        fact:"EPR policies make producers fund collection & recycling, encouraging eco-design and reducing waste."
+      },
+      {
+        q:"Which native-plant action best supports local biodiversity?",
+        img:"https://images.unsplash.com/photo-1602860602133-87972d91c5e2?auto=format&fit=crop&w=800&q=60",
+        opts:["Monoculture lawn","Pesticide-treated flowerbed","Pollinator-friendly native garden","Exotic ornamental species"],
+        correct:2,
+        fact:"Native gardens provide food & habitat for local insects, birds and other wildlife, fostering ecological balance."
+      }
+    ];
+
+    /* ===== QUIZ LOGIC ===== */
+    let idx=0,score=0,selected=null,answered=false;
+
+    function loadQ(){
+      answered=false;selected=null;
+      const q=questions[idx];
+      document.getElementById('questionText').textContent=q.q;
+      document.getElementById('questionImg').src=q.img;
+      const container=document.getElementById('optionsContainer');
+      container.innerHTML='';
+      q.opts.forEach((opt,i)=>{
+        const btn=document.createElement('button');
+        btn.className='option-btn';btn.textContent=opt;btn.onclick=()=>select(i);
+        container.appendChild(btn);
+      });
+      updateNav();
+    }
+    function select(i){
+      if(answered)return;
+      answered=true;selected=i;
+      const q=questions[idx];
+      const btns=document.querySelectorAll('.option-btn');
+      btns.forEach((b,idx)=>{
+        b.disabled=true;
+        if(idx===q.correct)b.classList.add('correct');
+        else if(idx===i)b.classList.add('incorrect');
+      });
+      if(i===q.correct)score++;
+      document.getElementById('score').textContent=score;
+    }
+    function navigate(dir){
+      if(dir===1&&!answered)return;
+      idx=Math.max(0,Math.min(questions.length-1,idx+dir));
+      if(idx===questions.length-1)showResult();
+      else loadQ();
+    }
+    function updateNav(){
+      document.getElementById('prevBtn').disabled=idx===0;
+      document.getElementById('nextBtn').disabled=!answered;
+      document.getElementById('progressFill').style.width=`${(idx+1)/questions.length*100}%`;
+    }
+    function showResult(){
+      document.getElementById('questionContainer').style.display='none';
+      document.querySelector('.nav').style.display='none';
+      const res=document.getElementById('resultScreen');
+      res.style.display='block';
+      const pct=Math.round(score/questions.length*100);
+      let msg='';
+      if(pct>=90)msg='Outstanding conservation champion! 🌟';
+      else if(pct>=70)msg='Great job, eco-hero! 🌿';
+      else if(pct>=50)msg='Good effort—keep learning! 🔍';
+      else msg='Stay curious about conservation! 🌍';
+      document.getElementById('resultTitle').textContent=`You scored ${score}/20 (${pct}%)`;
+      document.getElementById('resultMsg').textContent=msg;
+    }
+    function restartQuiz(){location.reload();}
+
+    /* ===== INIT ===== */
+    loadQ();
+  </script>
+</body>
+</html>

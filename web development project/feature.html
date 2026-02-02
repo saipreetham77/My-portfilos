@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Development Bootcamp - Edu Learning</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* 🌐 Global Styles */
+    body {
+      font-family: 'Fira Code', monospace;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+      color: #f1f1f1;
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      font-size: 2.8rem;
+      color: #00d9ff;
+    }
+
+    /* 📚 Course Container */
+    .course-details {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 40px;
+      background: #1e2a38;
+      border-radius: 15px;
+      box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Course Header */
+    .course-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .course-header h2 {
+      font-size: 2.5rem;
+      color: #00d9ff;
+    }
+
+    .course-header p {
+      color: #b2bec3;
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+
+    .course-header .btn {
+      display: inline-block;
+      margin-top: 20px;
+      background: linear-gradient(45deg, #00d9ff, #00ff95);
+      padding: 15px 35px;
+      border-radius: 30px;
+      color: #0f2027;
+      font-weight: bold;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .course-header .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 5px 15px rgba(0,0,0,0.4);
+    }
+
+    /* Instructor Section */
+    .instructor-profile {
+      display: flex;
+      align-items: center;
+      margin: 40px 0;
+      background: #243447;
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .instructor-profile img {
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      margin-right: 20px;
+      border: 4px solid #00d9ff;
+    }
+
+    .instructor-info h3 {
+      font-size: 1.6rem;
+      color: #00d9ff;
+    }
+
+    .instructor-info p {
+      font-size: 1rem;
+      color: #dcdde1;
+    }
+
+    /* Course Content */
+    .course-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .course-content h3 {
+      color: #00ff95;
+      font-size: 1.6rem;
+      margin-bottom: 15px;
+    }
+
+    .course-content ul {
+      list-style: none;
+      padding-left: 20px;
+    }
+
+    .course-content ul li {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #dcdde1;
+    }
+
+    .course-content ul li::before {
+      content: "</>";
+      color: #00d9ff;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    /* 🌟 Features Section */
+    .features {
+      margin-top: 50px;
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 2rem;
+      color: #00d9ff;
+      margin-bottom: 30px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: #243447;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0px 8px 18px rgba(0,0,0,0.4);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #00ff95;
+    }
+
+    .feature-card h3 {
+      color: #00d9ff;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      color: #dcdde1;
+      font-size: 0.95rem;
+    }
+
+    /* Enroll Button */
+    .enroll-btn {
+      display: block;
+      text-align: center;
+      background: linear-gradient(45deg, #00d9ff, #00ff95);
+      padding: 15px 40px;
+      color: #0f2027;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+      margin: 40px auto;
+      width: fit-content;
+    }
+
+    .enroll-btn:hover {
+      transform: translateY(-5px);
+    }
+
+    /* ⚡ Footer */
+    footer {
+      text-align: center;
+      background: #0f2027;
+      color: white;
+      padding: 15px 0;
+      margin-top: 50px;
+      border-top: 2px solid #00d9ff;
+    }
+
+    footer a {
+      color: #00ff95;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Our Features</h1>
+
+    <!-- 🌟 Features Section -->
+    <div class="features">
+      <h2>Why Choose These Courses?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Hands-on Projects</h3>
+          <p>Build real-world applications to showcase in your portfolio.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>Full-Stack Training</h3>
+          <p>Learn both front-end and back-end with modern frameworks.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📜</div>
+          <h3>Certification</h3>
+          <p>Earn an industry-recognized certificate upon completion.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤝</div>
+          <h3>Mentorship</h3>
+          <p>Get guidance and feedback directly from experienced developers.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enroll Button -->
+    <a href="registeration.html" class="enroll-btn">Start Coding Today</a>
+
+  </div>
+
+  <!-- ⚡ Footer -->
+  <footer>
+    <p>&copy; 2025 Edu Learning | All Rights Reserved</p>
+    <p>Explore more courses <a href="courses.html">here</a></p>
+  </footer>
+
+</body>
+</html>

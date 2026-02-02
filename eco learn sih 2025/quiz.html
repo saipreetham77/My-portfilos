@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Eco-Quiz Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .quiz-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quiz-title {
+            font-size: 2.5em;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .quiz-subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .progress-container {
+            background: #e0e0e0;
+            border-radius: 25px;
+            height: 12px;
+            margin: 25px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            border-radius: 25px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            min-width: 100px;
+            transition: transform 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .question-container {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .question-number {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option-button {
+            background: white;
+            border: 3px solid #e0e0e0;
+            padding: 18px 25px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-size: 1.1em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-button:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .option-button.selected {
+            border-color: #2980b9;
+            background: #ebf3fd;
+        }
+
+        .option-button.correct {
+            border-color: #27ae60;
+            background: #d4edda;
+            animation: correctAnswer 0.6s ease;
+        }
+
+        .option-button.incorrect {
+            border-color: #e74c3c;
+            background: #f8d7da;
+            animation: incorrectAnswer 0.6s ease;
+        }
+
+        @keyframes correctAnswer {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes incorrectAnswer {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+
+        .option-letter {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .option-button.correct .option-letter {
+            background: #27ae60;
+        }
+
+        .option-button.incorrect .option-letter {
+            background: #e74c3c;
+        }
+
+        .explanation {
+            background: #e8f4f8;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: #2980b9;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        .nav-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .prev-button {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+
+        .next-button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .next-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2980b9, #1f4e79);
+        }
+
+        .results-container {
+            text-align: center;
+            display: none;
+        }
+
+        .results-title {
+            font-size: 2.5em;
+            color: #1e3c72;
+            margin-bottom: 20px;
+        }
+
+        .results-score {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .results-message {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .category-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-button {
+            background: white;
+            border: 3px solid #ddd;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .category-button:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .category-button.active {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-color: #3498db;
+        }
+
+        .timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .timer.show {
+            display: block;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 25px;
+            }
+            
+            .quiz-title {
+                font-size: 2em;
+            }
+            
+            .question-text {
+                font-size: 1.1em;
+            }
+            
+            .option-button {
+                padding: 15px 20px;
+                font-size: 1em;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+            }
+            
+            .nav-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="timer" id="timer">⏱️ 30s</div>
+    
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1 class="quiz-title">🌍 Eco-Quiz Challenge</h1>
+            <p class="quiz-subtitle">Test your environmental knowledge!</p>
+        </div>
+
+        <div class="category-selector" id="categorySelector">
+            <button class="category-button active" data-category="all">🌟 Mixed Topics</button>
+            <a href="climatechange.html" class="category-button" data-category="climate">🌡️ Climate Change</a>
+            <a href="biodiversity quiz.html" class="category-button" data-category="biodiversity">🦋 Biodiversity</a>
+            <a href="pollution quiz.html" class="category-button" data-category="pollution">🏭 Pollution</a>
+            <a href="reneveable enegry.html" class="category-button" data-category="renewable">⚡ Renewable Energy</a>
+            <a href="conservation.html" class="category-button" data-category="conservation">🌱 Conservation</a>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-label">Question</div>
+                <div class="stat-value" id="currentQuestion">1/20</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Score</div>
+                <div class="stat-value" id="currentScore">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Accuracy</div>
+                <div class="stat-value" id="accuracy">0%</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Streak</div>
+                <div class="stat-value" id="streak">0</div>
+            </div>
+        </div>
+
+        <div class="question-container" id="questionContainer">
+            <div class="question-number" id="questionNumber">Question 1 of 20</div>
+            <div class="question-text" id="questionText">Loading question...</div>
+            <div class="options-container" id="optionsContainer"></div>
+            <div class="explanation" id="explanation">
+                <div class="explanation-title">💡 Explanation</div>
+                <div id="explanationText"></div>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-title">🎉 Quiz Complete!</div>
+            <div class="results-score" id="finalScore">0/20</div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="nav-button next-button" onclick="restartQuiz()">🔄 Play Again</button>
+        </div>
+
+        <div class="navigation-buttons">
+            <button class="nav-button prev-button" id="prevButton" onclick="previousQuestion()" disabled>← Previous</button>
+            <button class="nav-button next-button" id="nextButton" onclick="nextQuestion()" disabled>Next →</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Questions Database
+        const questionsDatabase = {
+            climate: [
+                {
+                    question: "What is the primary greenhouse gas contributing to climate change?",
+                    options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+                    correct: 1,
+                    explanation: "Carbon dioxide (CO2) is the primary greenhouse gas contributing to climate change, mainly from burning fossil fuels and deforestation."
+                },
+                {
+                    question: "By how much has the global average temperature increased since pre-industrial times?",
+                    options: ["0.5°C", "1.1°C", "2.0°C", "3.5°C"],
+                    correct: 1,
+                    explanation: "The global average temperature has increased by approximately 1.1°C (2°F) since pre-industrial times, according to the IPCC."
+                },
+                {
+                    question: "What is the Paris Agreement's primary temperature goal?",
+                    options: ["Keep warming below 4°C", "Keep warming below 2°C", "Keep warming below 1.5°C", "Keep warming below 3°C"],
+                    correct: 2,
+                    explanation: "The Paris Agreement aims to keep global temperature rise well below 2°C above pre-industrial levels, preferably limiting it to 1.5°C."
+                },
+                {
+                    question: "Which sector contributes the most to global greenhouse gas emissions?",
+                    options: ["Transportation", "Electricity & Heat Production", "Agriculture", "Industry"],
+                    correct: 1,
+                    explanation: "Electricity and heat production accounts for about 25% of global greenhouse gas emissions, primarily from burning coal, oil, and natural gas."
+                },
+                {
+                    question: "What is the main cause of sea level rise?",
+                    options: ["Tectonic plate movement", "Melting ice and thermal expansion", "Increased rainfall", "Ocean currents"],
+                    correct: 1,
+                    explanation: "Sea level rise is primarily caused by melting ice sheets and glaciers, plus thermal expansion of seawater as it warms."
+                }
+            ],
+            biodiversity: [
+                {
+                    question: "How many species are estimated to go extinct each year?",
+                    options: ["10-100", "1,000-10,000", "10,000-100,000", "1-5 million"],
+                    correct: 2,
+                    explanation: "Scientists estimate that 10,000-100,000 species go extinct each year, which is 1,000 times the natural rate."
+                },
+                {
+                    question: "What is the term for the variety of life in the world or in a particular habitat?",
+                    options: ["Ecology", "Biodiversity", "Evolution", "Symbiosis"],
+                    correct: 1,
+                    explanation: "Biodiversity refers to the variety of life in all its forms, including plants, animals, and microorganisms."
+                },
+                {
+                    question: "Which ecosystem has the highest biodiversity?",
+                    options: ["Arctic tundra", "Coral reefs", "Temperate forests", "Grasslands"],
+                    correct: 1,
+                    explanation: "Coral reefs support about 25% of all marine species despite covering less than 1% of the ocean floor."
+                },
+                {
+                    question: "What is the main cause of biodiversity loss?",
+                    options: ["Natural disasters", "Climate change", "Human activities", "Evolution"],
+                    correct: 2,
+                    explanation: "Human activities such as habitat destruction, pollution, overexploitation, and climate change are the primary drivers of biodiversity loss."
+                },
+                {
+                    question: "What percentage of Earth's land surface is covered by forests?",
+                    options: ["15%", "31%", "45%", "60%"],
+                    correct: 1,
+                    explanation: "Forests cover approximately 31% of Earth's land surface, down from 35% in the past."
+                }
+            ],
+            pollution: [
+                {
+                    question: "How long does it take for a plastic bottle to decompose?",
+                    options: ["10 years", "50 years", "100 years", "450 years"],
+                    correct: 3,
+                    explanation: "Plastic bottles can take up to 450 years to decompose in the environment."
+                },
+                {
+                    question: "What is the most common type of marine debris?",
+                    options: ["Glass", "Metal", "Plastic", "Paper"],
+                    correct: 2,
+                    explanation: "Plastic is the most common type of marine debris found in our oceans and waterways."
+                },
+                {
+                    question: "Which air pollutant is known as the 'silent killer'?",
+                    options: ["Carbon monoxide", "Sulfur dioxide", "Nitrogen oxide", "Particulate matter"],
+                    correct: 0,
+                    explanation: "Carbon monoxide is known as the 'silent killer' because it's colorless, odorless, and can be deadly in high concentrations."
+                },
+                {
+                    question: "How much of the world's water is freshwater?",
+                    options: ["97.5%", "50%", "2.5%", "10%"],
+                    correct: 2,
+                    explanation: "Only about 2.5% of Earth's water is freshwater, with most of that locked in ice caps and glaciers."
+                },
+                {
+                    question: "What is the Great Pacific Garbage Patch?",
+                    options: ["A large oil spill", "A floating island of trash", "Microplastic concentration", "A natural phenomenon"],
+                    correct: 2,
+                    explanation: "The Great Pacific Garbage Patch is a massive area of microplastic concentration in the Pacific Ocean, not a visible island of trash."
+                }
+            ],
+            renewable: [
+                {
+                    question: "Which renewable energy source has the lowest carbon footprint?",
+                    options: ["Solar", "Wind", "Hydroelectric", "Nuclear"],
+                    correct: 1,
+                    explanation: "Wind energy generally has the lowest carbon footprint over its lifecycle, followed by solar and hydroelectric."
+                },
+                {
+                    question: "What percentage of global electricity comes from renewable sources?",
+                    options: ["10%", "25%", "40%", "60%"],
+                    correct: 2,
+                    explanation: "About 40% of global electricity comes from renewable sources, including hydro, wind, solar, and biomass."
+                },
+                {
+                    question: "Which country leads in solar energy production?",
+                    options: ["USA", "Germany", "China", "India"],
+                    correct: 2,
+                    explanation: "China leads the world in solar energy production, accounting for over 35% of global solar capacity."
+                },
+                {
+                    question: "What is the main advantage of geothermal energy?",
+                    options: ["High cost", "Weather dependent", "Constant availability", "Limited locations"],
+                    correct: 2,
+                    explanation: "Geothermal energy provides constant, baseload power regardless of weather conditions, unlike solar and wind."
+                },
+                {
+                    question: "How efficient are modern solar panels?",
+                    options: ["5-10%", "15-20%", "30-40%", "50-60%"],
+                    correct: 1,
+                    explanation: "Modern commercial solar panels typically have an efficiency of 15-20%, with laboratory models reaching over 25%."
+                }
+            ],
+            conservation: [
+                {
+                    question: "What does the 3Rs principle stand for?",
+                    options: ["Reduce, Reuse, Recycle", "Repair, Reuse, Recycle", "Reduce, Reject, Recycle", "Reuse, Reduce, Reject"],
+                    correct: 0,
+                    explanation: "The 3Rs principle stands for Reduce, Reuse, Recycle - in that order of importance."
+                },
+                {
+                    question: "How much water can be saved by taking a 5-minute shower instead of a 10-minute shower?",
+                    options: ["5-10 gallons", "12-25 gallons", "30-40 gallons", "50+ gallons"],
+                    correct: 1,
+                    explanation: "A 5-minute shower can save approximately 12-25 gallons of water compared to a 10-minute shower, depending on the showerhead."
+                },
+                {
+                    question: "What is the most effective way to reduce your carbon footprint?",
+                    options: ["Recycle more", "Use LED bulbs", "Eat less meat", "Take shorter showers"],
+                    correct: 2,
+                    explanation: "Reducing meat consumption, especially beef, is one of the most effective personal actions to reduce carbon footprint."
+                },
+                {
+                    question: "How many times can aluminum be recycled?",
+                    options: ["Once", "5-10 times", "50 times", "Infinitely"],
+                    correct: 3,
+                    explanation: "Aluminum can be recycled infinitely without losing quality, making it one of the most sustainable materials."
+                },
+                {
+                    question: "What is composting?",
+                    options: ["Burning organic waste", "Burying waste", "Natural decomposition of organic matter", "Chemical treatment of waste"],
+                    correct: 2,
+                    explanation: "Composting is the natural process of decomposition of organic matter into nutrient-rich soil amendment."
+                }
+            ]
+        };
+
+        // Quiz Game Class
+        class EcoQuizGame {
+            constructor() {
+                this.currentCategory = 'all';
+                this.questions = [];
+                this.currentQuestion = 0;
+                this.score = 0;
+                this.correctAnswers = 0;
+                this.streak = 0;
+                this.maxStreak = 0;
+                this.answered = false;
+                this.timer = null;
+                this.timeLeft = 30;
+                this.timerActive = false;
+                
+                this.initializeGame();
+                this.setupEventListeners();
+            }
+
+            initializeGame() {
+                this.loadQuestions();
+                this.displayQuestion();
+                this.updateStats();
+            }
+
+            loadQuestions() {
+                if (this.currentCategory === 'all') {
+                    // Load mixed questions from all categories
+                    const categories = Object.keys(questionsDatabase);
+                    this.questions = [];
+                    
+                    categories.forEach(category => {
+                        const categoryQuestions = [...questionsDatabase[category]];
+                        // Shuffle and take 4 questions from each category
+                        this.shuffleArray(categoryQuestions);
+                        this.questions.push(...categoryQuestions.slice(0, 4));
+                    });
+                    
+                    // Shuffle all questions
+                    this.shuffleArray(this.questions);
+                } else {
+                    // Load questions from specific category
+                    this.questions = [...questionsDatabase[this.currentCategory]];
+                    this.shuffleArray(this.questions);
+                }
+                
+                // Take only 20 questions
+                this.questions = this.questions.slice(0, 20);
+            }
+
+            shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            setupEventListeners() {
+                document.querySelectorAll('.category-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        this.switchCategory(e.target.dataset.category);
+                    });
+                });
+            }
+
+            switchCategory(category) {
+                this.currentCategory = category;
+                document.querySelectorAll('.category-button').forEach(b => b.classList.remove('active'));
+                document.querySelector(`[data-category="${category}"]`).classList.add('active');
+                
+                this.restartQuiz();
+            }
+
+            displayQuestion() {
+                if (this.currentQuestion >= this.questions.length) {
+                    this.showResults();
+                    return;
+                }
+
+                const question = this.questions[this.currentQuestion];
+                document.getElementById('questionNumber').textContent = `Question ${this.currentQuestion + 1} of ${this.questions.length}`;
+                document.getElementById('questionText').textContent = question.question;
+                
+                const optionsContainer = document.getElementById('optionsContainer');
+                optionsContainer.innerHTML = '';
+                
+                question.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-button';
+                    button.innerHTML = `
+                        <span class="option-letter">${String.fromCharCode(65 + index)}</span>
+                        ${option}
+                    `;
+                    button.onclick = () => this.selectAnswer(index);
+                    optionsContainer.appendChild(button);
+                });
+
+                document.getElementById('explanation').classList.remove('show');
+                document.getElementById('nextButton').disabled = true;
+                this.answered = false;
+                
+                this.startTimer();
+            }
+
+            startTimer() {
+                if (this.timer) clearInterval(this.timer);
+                
+                this.timeLeft = 30;
+                this.timerActive = true;
+                document.getElementById('timer').classList.add('show');
+                
+                this.timer = setInterval(() => {
+                    this.timeLeft--;
+                    document.getElementById('timer').textContent = `⏱️ ${this.timeLeft}s`;
+                    
+                    if (this.timeLeft <= 10) {
+                        document.getElementById('timer').style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
+                    }
+                    
+                    if (this.timeLeft <= 0) {
+                        this.timeUp();
+                    }
+                }, 1000);
+            }
+
+            timeUp() {
+                clearInterval(this.timer);
+                this.timerActive = false;
+                document.getElementById('timer').classList.remove('show');
+                
+                if (!this.answered) {
+                    this.selectAnswer(-1); // Auto-select wrong answer
+                    this.showMessage('⏰ Time\'s up!', 'warning');
+                }
+            }
+
+            selectAnswer(selectedIndex) {
+                if (this.answered) return;
+                
+                clearInterval(this.timer);
+                this.timerActive = false;
+                document.getElementById('timer').classList.remove('show');
+                
+                this.answered = true;
+                const question = this.questions[this.currentQuestion];
+                const buttons = document.querySelectorAll('.option-button');
+                
+                buttons.forEach((button, index) => {
+                    button.disabled = true;
+                    if (index === question.correct) {
+                        button.classList.add('correct');
+                    } else if (index === selectedIndex && selectedIndex !== question.correct) {
+                        button.classList.add('incorrect');
+                    }
+                });
+
+                if (selectedIndex === question.correct) {
+                    this.score += 10;
+                    this.correctAnswers++;
+                    this.streak++;
+                    this.maxStreak = Math.max(this.maxStreak, this.streak);
+                    this.showMessage('✅ Correct! Well done!', 'success');
+                } else {
+                    this.streak = 0;
+                    if (selectedIndex === -1) {
+                        this.showMessage('❌ Time ran out!', 'error');
+                    } else {
+                        this.showMessage('❌ Incorrect. Better luck next time!', 'error');
+                    }
+                }
+
+                // Show explanation
+                document.getElementById('explanationText').textContent = question.explanation;
+                document.getElementById('explanation').classList.add('show');
+                
+                document.getElementById('nextButton').disabled = false;
+                this.updateStats();
+            }
+
+            nextQuestion() {
+                this.currentQuestion++;
+                this.displayQuestion();
+                this.updateProgress();
+            }
+
+            previousQuestion() {
+                if (this.currentQuestion > 0) {
+                    this.currentQuestion--;
+                    this.displayQuestion();
+                    this.updateProgress();
+                }
+            }
+
+            updateStats() {
+                document.getElementById('currentQuestion').textContent = `${this.currentQuestion + 1}/${this.questions.length}`;
+                document.getElementById('currentScore').textContent = this.score;
+                document.getElementById('streak').textContent = this.streak;
+                
+                const accuracy = this.currentQuestion > 0 
+                    ? Math.round((this.correctAnswers / (this.currentQuestion + (this.answered ? 1 : 0))) * 100) 
+                    : 0;
+                document.getElementById('accuracy').textContent = `${accuracy}%`;
+            }
+
+            updateProgress() {
+                const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
+            }
+
+            showResults() {
+                clearInterval(this.timer);
+                document.getElementById('questionContainer').style.display = 'none';
+                document.getElementById('resultsContainer').style.display = 'block';
+                document.querySelector('.navigation-buttons').style.display = 'none';
+                document.getElementById('timer').style.display = 'none';
+                
+                const finalScore = `${this.correctAnswers}/${this.questions.length}`;
+                document.getElementById('finalScore').textContent = finalScore;
+                
+                let message = '';
+                const percentage = (this.correctAnswers / this.questions.length) * 100;
+                
+                if (percentage >= 90) {
+                    message = '🏆 Outstanding! You\'re an environmental expert!';
+                } else if (percentage >= 80) {
+                    message = '🥇 Excellent! Your environmental knowledge is impressive!';
+                } else if (percentage >= 70) {
+                    message = '🥈 Great job! You know your environmental facts!';
+                } else if (percentage >= 60) {
+                    message = '🥉 Good effort! Keep learning about the environment!';
+                } else {
+                    message = '📚 Keep studying! Environmental knowledge is power!';
+                }
+                
+                document.getElementById('resultsMessage').textContent = message;
+                
+                // Save to localStorage
+                this.saveResults();
+            }
+
+            saveResults() {
+                const results = {
+                    score: this.score,
+                    correct: this.correctAnswers,
+                    total: this.questions.length,
+                    category: this.currentCategory,
+                    date: new Date().toISOString()
+                };
+                
+                let allResults = JSON.parse(localStorage.getItem('ecoQuizResults') || '[]');
+                allResults.push(results);
+                localStorage.setItem('ecoQuizResults', JSON.stringify(allResults));
+            }
+
+            showMessage(text, type) {
+                const message = document.createElement('div');
+                message.className = `message ${type} show`;
+                message.textContent = text;
+                message.style.position = 'fixed';
+                message.style.top = '20px';
+                message.style.left = '50%';
+                message.style.transform = 'translateX(-50%)';
+                message.style.padding = '15px 30px';
+                message.style.borderRadius = '25px';
+                message.style.color = 'white';
+                message.style.fontWeight = 'bold';
+                message.style.zIndex = '1000';
+                message.style.boxShadow = '0 5px 20px rgba(0,0,0,0.3)';
+                
+                if (type === 'success') {
+                    message.style.background = 'linear-gradient(135deg, #27ae60, #229954)';
+                } else if (type === 'error') {
+                    message.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+                } else {
+                    message.style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
+                }
+                
+                document.body.appendChild(message);
+                
+                setTimeout(() => {
+                    message.remove();
+                }, 3000);
+            }
+        }
+
+        // Global functions
+        function nextQuestion() {
+            game.nextQuestion();
+        }
+
+        function previousQuestion() {
+            game.previousQuestion();
+        }
+
+        function restartQuiz() {
+            location.reload();
+        }
+
+        // Initialize the quiz
+        const game = new EcoQuizGame();
+    </script>
+</body>
+</html>

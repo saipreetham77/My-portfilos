@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pollution Quiz | 20 Questions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* GLOBAL */
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#000;
+      overflow:hidden;
+    }
+
+    /* SLIDESHOW BACKGROUND */
+    .bg-slideshow{
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      z-index:-2;
+    }
+    .bg-slide{
+      position:absolute;
+      width:100%;height:100%;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      animation:slideShow 24s infinite;
+    }
+    .bg-slide:nth-child(1){animation-delay:0s}
+    .bg-slide:nth-child(2){animation-delay:6s}
+    .bg-slide:nth-child(3){animation-delay:12s}
+    .bg-slide:nth-child(4){animation-delay:18s}
+
+    @keyframes slideShow{
+      0%,20%{opacity:1}
+      25%,100%{opacity:0}
+    }
+
+    /* OVERLAY FOR READABILITY */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:-1;
+    }
+
+    /* QUIZ CARD */
+    .quiz-card{
+      width:90%;max-width:700px;
+      background:rgba(255,255,255,.92);
+      border-radius:20px;
+      padding:35px 30px;
+      box-shadow:0 15px 40px rgba(0,0,0,.5);
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    header{
+      text-align:center;
+    }
+    header h1{font-size:2.1rem;color:#0d3b66}
+    header p{font-size:1rem;color:#555}
+
+    /* PROGRESS */
+    .progress-bar{
+      height:10px;border-radius:5px;background:#ddd;overflow:hidden;
+    }
+    .progress-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#e63946 0%, #f77f00 100%);
+      transition:width .4s ease;
+    }
+
+    /* QUESTION */
+    .question-box{
+      min-height:90px;
+    }
+    .question-text{
+      font-size:1.25rem;color:#222;line-height:1.4
+    }
+    .question-img{
+      width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-top:10px;
+    }
+
+    /* OPTIONS */
+    .options{
+      display:grid;gap:12px;
+    }
+    .option-btn{
+      background:#fff;border:2px solid #ccc;border-radius:10px;padding:14px;font-size:1rem;cursor:pointer;transition:.25s;
+    }
+    .option-btn:hover{border-color:#e63946;transform:translateY(-2px)}
+    .option-btn.correct{border-color:#27ae60;background:#d4edda}
+    .option-btn.incorrect{border-color:#e63946;background:#f8d7da}
+    .option-btn:disabled{cursor:not-allowed;opacity:.8}
+
+    /* NAV */
+    .nav{
+      display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+    }
+    .nav button{
+      border:none;border-radius:25px;padding:10px 22px;font-size:1rem;cursor:pointer;transition:.3s;
+    }
+    #prevBtn{background:#95a5a6;color:#fff}
+    #nextBtn{background:#e63946;color:#fff}
+    #nextBtn:disabled{background:#95a5a6;cursor:not-allowed}
+    .score-display{font-weight:600;color:#0d3b66}
+
+    /* RESULTS */
+    .result-screen{
+      text-align:center;display:none;
+    }
+    .result-screen h2{font-size:2rem;margin-bottom:15px;color:#0d3b66}
+    .result-screen p{font-size:1.1rem;margin-bottom:20px;color:#444}
+    #restartBtn{background:#e63946;color:#fff;border:none;border-radius:25px;padding:12px 28px;font-size:1rem;cursor:pointer}
+
+    /* RESPONSIVE */
+    @media(max-width:600px){
+      .quiz-card{padding:25px 20px}
+      header h1{font-size:1.7rem}
+      .question-text{font-size:1.1rem}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background slideshow -->
+  <div class="bg-slideshow">
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1532601224476-15a7d3d100f7?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1561478908-1ceb3bcc74b6?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=1350&q=80');"></div>
+  </div>
+  <div class="overlay"></div>
+
+  <!-- Quiz Card -->
+  <div class="quiz-card">
+    <header>
+      <h1>🏭 Pollution Quiz</h1>
+      <p>Test your knowledge on air, water, soil & plastic pollution</p>
+    </header>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="question-box">
+      <div class="question-text" id="questionText"></div>
+      <img class="question-img" id="questionImg" alt="question image">
+    </div>
+
+    <div class="options" id="optionsContainer"></div>
+
+    <div class="nav">
+      <button id="prevBtn" onclick="navigate(-1)">← Prev</button>
+      <span class="score-display">Score: <span id="score">0</span>/20</span>
+      <button id="nextBtn" onclick="navigate(1)" disabled>Next →</button>
+    </div>
+
+    <div class="result-screen" id="resultScreen">
+      <h2 id="resultTitle"></h2>
+      <p id="resultMsg"></p>
+      <button id="restartBtn" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+  </div>
+
+  <script>
+    /* ===== POLLUTION QUESTION BANK (20 Questions) ===== */
+    const questions=[
+      {
+        q:"What is the most common type of marine debris worldwide?",
+        img:"https://images.unsplash.com/photo-1532601224476-15a7d3d100f7?auto=format&fit=crop&w=800&q=60",
+        opts:["Glass bottles","Metal cans","Plastic items","Paper products"],
+        correct:2,
+        fact:"Plastic comprises ~80 % of marine litter due to its durability and single-use prevalence."
+      },
+      {
+        q:"Which air pollutant is known as the ‘silent killer’ because it is colourless and odourless?",
+        img:"https://images.unsplash.com/photo-1561478908-1ceb3bcc74b6?auto=format&fit=crop&w=800&q=60",
+        opts:["Carbon monoxide","Sulphur dioxide","Nitrogen dioxide","Ozone"],
+        correct:0,
+        fact:"CO binds to blood haemoglobin, reducing oxygen transport and can be fatal at high levels."
+      },
+      {
+        q:"How long does it take for a single-use plastic bottle to decompose in the environment?",
+        img:"https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=800&q=60",
+        opts:["~10 years","~50 years","~100 years","~450 years"],
+        correct:3,
+        fact:"PET bottles photodegrade very slowly; microplastics persist even longer."
+      },
+      {
+        q:"What pH level indicates acid rain?",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["< 7.0","< 6.5","< 5.6","< 4.5"],
+        correct:2,
+        fact:"Normal rainwater pH ≈ 5.6 (due to dissolved CO₂); acid rain has pH < 5.6."
+      },
+      {
+        q:"Which sector is the largest anthropogenic source of marine oil pollution?",
+        img:"https://images.unsplash.com/photo-1563729783894-93a3976d5c3d?auto=format&fit=crop&w=800&q=60",
+        opts:["Tanker accidents","Land-based runoff","Offshore drilling","Natural seeps"],
+        correct:1,
+        fact:"Urban & industrial runoff plus river discharge contribute >50 % of marine oil input."
+      },
+      {
+        q:"What are PM2.5 particles?",
+        img:"https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=800&q=60",
+        opts:["Particulate matter ≤ 2.5 mm","Particulate matter ≤ 2.5 µm","Plastic microfibres","Ozone precursors"],
+        correct:1,
+        fact:"PM2.5 (≤ 2.5 micrometres) can penetrate deep into lungs and enter bloodstream."
+      },
+      {
+        q:"Eutrophication of water bodies is mainly driven by excess:",
+        img:"https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=800&q=60",
+        opts:["Heavy metals","Nutrients (nitrogen & phosphorus)","Pesticides","Medicines"],
+        correct:1,
+        fact:"Nutrient overload fuels algal blooms, leading to oxygen depletion when algae decompose."
+      },
+      {
+        q:"Which heavy metal is neurotoxic and was historically used in petrol?",
+        img:"https://images.unsplash.com/photo-1610878180933-318f8c1c0c8c?auto=format&fit=crop&w=800&q=60",
+        opts:["Mercury","Cadmium","Lead","Arsenic"],
+        correct:2,
+        fact:"Tetraethyl-lead was added to gasoline; global phase-out has reduced atmospheric lead."
+      },
+      {
+        q:"What is the Great Pacific Garbage Patch?",
+        img:"https://images.unsplash.com/photo-1532601224476-15a7d3d100f7?auto=format&fit=crop&w=800&q=60",
+        opts:["Floating island of trash","Microplastic accumulation zone","Oil slick","Natural debris field"],
+        correct:1,
+        fact:"It’s a region of high microplastic concentration, not a solid island."
+      },
+      {
+        q:"Ground-level ozone is formed by the reaction of:",
+        img:"https://images.unsplash.com/photo-1602860602133-87972d91c5e2?auto=format&fit=crop&w=800&q=60",
+        opts:["NOx + VOCs in sunlight","SO₂ + CO","CO₂ + H₂O","CH₄ + O₂"],
+        correct:0,
+        fact:"NOx & volatile organic compounds react photochemically to produce harmful ozone."
+      },
+      {
+        q:"Which household action reduces water pollution most effectively?",
+        img:"https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=800&q=60",
+        opts:["Using antibacterial soap","Pouring grease down drain","Proper medicine disposal","Frequent lawn pesticide use"],
+        correct:2,
+        fact:"Returning unused meds to take-back sites prevents pharmaceutical contamination of waterways."
+      },
+      {
+        q:"Microbeads were banned in many countries because they:",
+        img:"https://images.unsplash.com/photo-1532601224476-15a7d3d100f7?auto=format&fit=crop&w=800&q=60",
+        opts:["Cause skin irritation","Pass through filters into waterways","Are toxic on contact","Are expensive"],
+        correct:1,
+        fact:"Tiny plastic beads (<1 mm) bypass wastewater treatment plants and enter rivers & oceans."
+      },
+      {
+        q:"What is biomagnification?",
+        img:"https://images.unsplash.com/photo-1563729783894-93a3976d5c3d?auto=format&fit=crop&w=800&q=60",
+        opts:["Bacterial growth","Increase in pollutant concentration up food chain","Algal bloom expansion","Oxygen depletion"],
+        correct:1,
+        fact:"Persistent pollutants (e.g., mercury, PCBs) accumulate in predators eating contaminated prey."
+      },
+      {
+        q:"Which gas is responsible for the majority of indoor air pollution deaths globally?",
+        img:"https://images.unsplash.com/photo-1602860602133-87972d91c5e2?auto=format&fit=crop&w=800&q=60",
+        opts:["Carbon monoxide from cookstoves","Radon","Formaldehyde","Asbestos"],
+        correct:0,
+        fact:"Smoke from burning biomass/coal indoors causes ~3.2 million premature deaths annually."
+      },
+      {
+        q:"Reducing sulphur emissions from shipping has the co-benefit of:",
+        img:"https://images.unsplash.com/photo-1565799557189-1f44d6f0e0d8?auto=format&fit=crop&w=800&q=60",
+        opts:["Lowering ocean acidification","Cutting particulate air pollution","Increasing fuel efficiency","Preventing oil spills"],
+        correct:1,
+        fact:"Sulphur in fuel forms sulphate particles; tighter limits improve coastal air quality."
+      },
+      {
+        q:"What is the primary source of microplastic fibres found in remote ocean areas?",
+        img:"https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=800&q=60",
+        opts:["Plastic bags","Synthetic textile laundering","Car tyre dust","Fishing nets"],
+        correct:1,
+        fact:"Washing synthetic clothes releases billions of microfibres per wash into wastewater."
+      },
+      {
+        q:"Which practice helps reduce plastic pollution?",
+        img:"https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=800&q=60",
+        opts:["Reusable bags/bottles","Single-use straws","Plastic glitter","Multi-layer packaging"],
+        correct:0,
+        fact:"Choosing reusables cuts demand for single-use plastics, reducing waste and leakage into environment."
+      },
+      {
+        q:"Noise pollution in oceans can affect marine mammals by:",
+        img:"https://images.unsplash.com/photo-1563729783894-93a3976d5c3d?auto=format&fit=crop&w=800&q=60",
+        opts:["Improving navigation","Disrupting communication & navigation","Enhancing feeding","Increasing reproduction"],
+        correct:1,
+        fact:"Ship traffic & seismic surveys interfere with whales’ echolocation and social calls."
+      }
+    ];
+
+    /* ===== QUIZ LOGIC ===== */
+    let idx=0,score=0,selected=null,answered=false;
+
+    function loadQ(){
+      answered=false;selected=null;
+      const q=questions[idx];
+      document.getElementById('questionText').textContent=q.q;
+      document.getElementById('questionImg').src=q.img;
+      const container=document.getElementById('optionsContainer');
+      container.innerHTML='';
+      q.opts.forEach((opt,i)=>{
+        const btn=document.createElement('button');
+        btn.className='option-btn';btn.textContent=opt;btn.onclick=()=>select(i);
+        container.appendChild(btn);
+      });
+      updateNav();
+    }
+    function select(i){
+      if(answered)return;
+      answered=true;selected=i;
+      const q=questions[idx];
+      const btns=document.querySelectorAll('.option-btn');
+      btns.forEach((b,idx)=>{
+        b.disabled=true;
+        if(idx===q.correct)b.classList.add('correct');
+        else if(idx===i)b.classList.add('incorrect');
+      });
+      if(i===q.correct)score++;
+      document.getElementById('score').textContent=score;
+    }
+    function navigate(dir){
+      if(dir===1&&!answered)return;
+      idx=Math.max(0,Math.min(questions.length-1,idx+dir));
+      if(idx===questions.length-1)showResult();
+      else loadQ();
+    }
+    function updateNav(){
+      document.getElementById('prevBtn').disabled=idx===0;
+      document.getElementById('nextBtn').disabled=!answered;
+      document.getElementById('progressFill').style.width=`${(idx+1)/questions.length*100}%`;
+    }
+    function showResult(){
+      document.getElementById('questionContainer').style.display='none';
+      document.querySelector('.nav').style.display='none';
+      const res=document.getElementById('resultScreen');
+      res.style.display='block';
+      const pct=Math.round(score/questions.length*100);
+      let msg='';
+      if(pct>=90)msg='Outstanding eco-warrior! 🌟';
+      else if(pct>=70)msg='Great job fighting pollution! ♻️';
+      else if(pct>=50)msg='Good effort—keep learning! 📚';
+      else msg='Stay curious about cleaner Earth! 🌍';
+      document.getElementById('resultTitle').textContent=`You scored ${score}/20 (${pct}%)`;
+      document.getElementById('resultMsg').textContent=msg;
+    }
+    function restartQuiz(){location.reload();}
+
+    /* ===== INIT ===== */
+    loadQ();
+  </script>
+</body>
+</html>

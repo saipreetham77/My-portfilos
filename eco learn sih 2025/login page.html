@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Edu Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e0f2fe; /* Light blue background */
+        }
+        .container {
+            background-color: #ffffff;
+            max-width: 440px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 1.5rem;
+            border: 1px solid #e2e8f0;
+            padding: 2.5rem;
+        }
+        .title {
+            color: #15803d; /* Dark green */
+        }
+        .subtitle {
+            color: #4b5563;
+        }
+        .input-group input {
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            color: #1f2937;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #15803d;
+            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.25);
+        }
+        .btn-primary {
+            background-color: #15803d;
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .btn-primary:hover {
+            background-color: #16a34a; /* Slightly lighter green on hover */
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="container mx-4 sm:mx-0 p-8 space-y-8">
+        <div class="text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-[#15803d]" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m-2 15.5l-5-5 1.41-1.41L10 14.67l7.59-7.59L19 8.5z"/>
+            </svg>
+            <h1 class="title text-4xl font-bold mb-2">Welcome Back!</h1>
+            <p class="subtitle">Login to your account to continue your journey.</p>
+        </div>
+
+        <form id="loginForm" class="space-y-6">
+            <div class="input-group flex flex-col space-y-2">
+                <label for="email" class="text-sm font-medium text-gray-700">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" class="w-full" required>
+            </div>
+            <div class="input-group flex flex-col space-y-2">
+                <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" class="w-full" required>
+            </div>
+            
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-[#15803d] rounded border-gray-300 focus:ring-[#15803d]">
+                    <label for="remember-me" class="ml-2 text-gray-900">Remember me</label>
+                </div>
+                <a href="forgotpwaasword.html" class="font-medium text-[#15803d] hover:text-[#16a34a]">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-primary w-full">Sign In</button>
+        </form>
+
+        <div class="text-center text-sm">
+            <p class="text-gray-600">Don't have an account? <a href="register.html" class="font-medium text-[#15803d] hover:text-[#16a34a]">Sign up here</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevents the default form submission
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (email && password) {
+                // This is where you would send the data to a server for authentication.
+                // For this example, we'll just log a success message.
+                console.log('Login successful for:', email);
+                // In a real application, you would redirect the user to a dashboard or game page.
+            } else {
+                console.log('Please fill out both fields.');
+            }
+        });
+    </script>
+</body>
+</html>

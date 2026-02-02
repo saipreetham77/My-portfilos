@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Form - Edu Learning</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* 🌐 Global Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      overflow: hidden;
+    }
+
+    /* 🌟 Glassmorphism Container */
+    .form-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 40px;
+      width: 400px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      color: #fff;
+      text-align: center;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      color: #00f7ff;
+      letter-spacing: 1px;
+    }
+
+    /* Input Fields */
+    .form-container input {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 12px;
+      outline: none;
+      font-size: 1rem;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .form-container input:focus {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0px 0px 8px #00f7ff;
+    }
+
+    /* Submit Button */
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 30px;
+      background: linear-gradient(45deg, #00f7ff, #00ff95);
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-container button:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 6px 15px rgba(0, 247, 255, 0.6);
+    }
+
+    /* Small Text */
+    .form-container p {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+
+    .form-container a {
+      color: #00f7ff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .form-container a:hover {
+      color: #00ff95;
+    }
+
+    /* ✨ Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🌈 Registration Form -->
+  <div class="form-container">
+    <h2>Create Account</h2>
+     <form action="register.php" method="post">
+      <label for="fullname">Full Name:</label>
+      <input type="text" placeholder="Full Name" name="fullname" required>
+      <label for="email">Email:</label>
+      <input type="email" placeholder="Email Address" name="email" required>
+      <label for="password">Password:</label>
+      <input type="password" placeholder="Password" name="password" required>
+      <label for="confirm_password">confirm Password:</label>
+      <input type="password" placeholder="Confirm Password" name="confirm_password" required>
+      <button type="submit">Register</button>
+    </form>
+
+   <p>Already have an account? <a href="login.html">Login here</a></p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Development Bootcamp - Edu Learning</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* 🌐 Global Styles */
+    body {
+      font-family: 'Fira Code', monospace;
+      margin: 0;
+      padding: 0;
+      background: #0f2027;  /* gradient for techy look */
+      background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+      color: #f1f1f1;
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      font-size: 2.8rem;
+      color: #00d9ff;
+    }
+
+    /* 📚 Course Container */
+    .course-details {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 40px;
+      background: #1e2a38;
+      border-radius: 15px;
+      box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Course Header */
+    .course-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .course-header h2 {
+      font-size: 2.5rem;
+      color: #00d9ff;
+    }
+
+    .course-header p {
+      color: #b2bec3;
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+
+    .course-header .btn {
+      display: inline-block;
+      margin-top: 20px;
+      background: linear-gradient(45deg, #00d9ff, #00ff95);
+      padding: 15px 35px;
+      border-radius: 30px;
+      color: #0f2027;
+      font-weight: bold;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .course-header .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 5px 15px rgba(0,0,0,0.4);
+    }
+
+    /* Instructor Section */
+    .instructor-profile {
+      display: flex;
+      align-items: center;
+      margin: 40px 0;
+      background: #243447;
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .instructor-profile img {
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      margin-right: 20px;
+      border: 4px solid #00d9ff;
+    }
+
+    .instructor-info h3 {
+      font-size: 1.6rem;
+      color: #00d9ff;
+    }
+
+    .instructor-info p {
+      font-size: 1rem;
+      color: #dcdde1;
+    }
+
+    /* Course Content */
+    .course-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .course-content h3 {
+      color: #00ff95;
+      font-size: 1.6rem;
+      margin-bottom: 15px;
+    }
+
+    .course-content ul {
+      list-style: none;
+      padding-left: 20px;
+    }
+
+    .course-content ul li {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #dcdde1;
+      position: relative;
+    }
+
+    .course-content ul li::before {
+      content: "</>";
+      color: #00d9ff;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    /* Enroll Button */
+    .enroll-btn {
+      display: block;
+      text-align: center;
+      background: linear-gradient(45deg, #00d9ff, #00ff95);
+      padding: 15px 40px;
+      color: #0f2027;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+      margin: 30px auto;
+      width: fit-content;
+    }
+
+    .enroll-btn:hover {
+      transform: translateY(-5px);
+    }
+
+    /* ⚡ Footer */
+    footer {
+      text-align: center;
+      background: #0f2027;
+      color: white;
+      padding: 15px 0;
+      margin-top: 50px;
+      border-top: 2px solid #00d9ff;
+    }
+
+    footer a {
+      color: #00ff95;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Course Details</h1>
+
+  <!-- 📚 Course Details Section -->
+  <div class="course-details">
+
+    <!-- Course Header -->
+    <div class="course-header">
+      <h2>Web Development Bootcamp</h2>
+      <p>Learn to build modern, responsive, and dynamic websites from scratch — front-end to back-end.</p>
+      <a href="registeration.html" class="btn">Enroll Now</a>
+    </div>
+
+    <!-- Instructor Profile -->
+    <div class="instructor-profile">
+      <img src="https://static.vecteezy.com/system/resources/previews/038/974/578/non_2x/ai-generated-professional-portrait-of-a-competent-woman-free-photo.jpg" alt="Instructor">
+      <div class="instructor-info">
+        <h3>Isabelle Lee</h3>
+        <p>Full-Stack Developer with 9+ years of experience in JavaScript, React, Node.js, and Cloud Technologies.</p>
+        <p>He has worked on enterprise-level web apps and mentored 5000+ students globally.</p>
+      </div>
+    </div>
+
+    <!-- Course Content -->
+    <div class="course-content">
+      <div>
+        <h3>What You'll Learn</h3>
+        <ul>
+          <li>HTML5, CSS3, and Responsive Design</li>
+          <li>JavaScript Fundamentals & ES6+</li>
+          <li>Frontend Frameworks (React.js)</li>
+          <li>Backend with Node.js & Express</li>
+          <li>Databases (MongoDB & SQL)</li>
+          <li>Deploying Web Apps to the Cloud</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Course Features</h3>
+        <ul>
+          <li>20+ hours of hands-on lessons</li>
+          <li>Real-world projects & GitHub portfolio</li>
+          <li>Interactive coding challenges</li>
+          <li>Certification upon completion</li>
+          <li>1:1 mentorship & support</li>
+          <li>Lifetime access & community</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Enroll Button -->
+    <a href="enroll.html" class="enroll-btn">Start Cod

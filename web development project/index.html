@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edu Learning | Online Learning Platform</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* 🌐 Global Styles */
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1.6;
+      background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+      color: #333;
+      scroll-behavior: smooth;
+    }
+
+    h1, h2 {
+      font-family: 'Montserrat', sans-serif;
+      color: #2c3e50;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      color: #444;
+      font-size: 1rem;
+      margin: 10px 0 20px;
+    }
+
+    /* 🌟 Navbar */
+    .navbar {
+      background: linear-gradient(90deg, #2c3e50, #34495e);
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      padding: 15px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    .navbar a {
+      color: #f5f5f5;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .navbar a:hover {
+      background: #f39c12;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    /* 🎉 Hero Section */
+    .hero {
+      position: relative;
+      height: 90vh;
+      background: url('https://images.unsplash.com/photo-1553484771-898ed465e931?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      padding: 20px;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      animation: fadeInDown 1s ease-in-out;
+    }
+
+    .typing {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #f39c12;
+      border-right: 3px solid #f39c12;
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typing 4s steps(25, end) infinite alternate;
+    }
+
+    @keyframes typing {
+      0% { width: 0 }
+      50% { width: 100% }
+      100% { width: 0 }
+    }
+
+    .hero button {
+      margin-top: 20px;
+      background: linear-gradient(45deg, #f39c12, #e67e22);
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      color: white;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .hero button:hover {
+      transform: translateY(-5px) scale(1.05);
+      background: linear-gradient(45deg, #e67e22, #f39c12);
+    }
+
+    /* 📌 Sections */
+    section {
+      padding: 60px 20px;
+      text-align: center;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    /* 🌟 Features Section */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      margin-top: 40px;
+    }
+
+    .feature {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    }
+
+    .feature span {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 15px;
+      color: #f39c12;
+    }
+
+    /* 🎴 Cards */
+    .course-card {
+      background: white;
+      padding: 25px;
+      margin: 20px auto;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 320px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .course-card:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+
+    /* ⚡ Footer */
+    footer {
+      text-align: center;
+      background: #2c3e50;
+      color: white;
+      padding: 15px 0;
+      margin-top: 40px;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      position: relative;
+    }
+
+    footer::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 60%;
+      height: 3px;
+      background: linear-gradient(90deg, #f39c12, #e74c3c, #9b59b6);
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .typing { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🌟 Navbar -->
+  <div class="navbar">
+    <P>Home<p>
+    <a href="feature.html">Features</a>
+    <a href="courses.html">Courses</a>
+    <a href="registeration.html">Register</a>
+    <a href="login.html">Login</a>
+  </div>
+
+  <!-- 🎉 Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <h1>Welcome to Edu Learning</h1>
+      <p class="typing">Learn. Grow. Achieve.</p>
+      <br>
+      <button onclick="window.location.href='#courses'">Explore Courses</button>
+    </div>
+  </section>
+
+  <!-- 🌟 Features -->
+  <section id="features">
+    <h2>✨ Why Choose Edu Learning?</h2>
+    <p>Smart learning with the best tools and instructors.</p>
+    <div class="features">
+      <div class="feature">
+        <span>🎓</span>
+        <h3>Expert Mentors</h3>
+        <p>Learn from industry leaders with real-world experience.</p>
+      </div>
+      <div class="feature">
+        <span>📱</span>
+        <h3>Anytime, Anywhere</h3>
+        <p>Access courses on desktop, tablet, or mobile seamlessly.</p>
+      </div>
+      <div class="feature">
+        <span>🏆</span>
+        <h3>Certifications</h3>
+        <p>Get recognized with globally valid certifications.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🎓 Courses -->
+  <section id="courses">
+    <h2> 🎓 Popular Courses </h2>
+    <p>Boost your career with our most in-demand courses.</p>
+    <div class="course-card">💻 Web Development</div>
+    <div class="course-card">📊 Data Science</div>
+    <div class="course-card">🎨 Creative Writing</div>
+  </section>
+
+  <!-- ⚡ Footer -->
+  <footer>
+    © 2025 Edu Learning | All Rights Reserved
+  </footer>
+
+</body>
+</html>

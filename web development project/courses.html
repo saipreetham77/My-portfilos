@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Courses - Edu Learning</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* 🌐 Global Styles */
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+      color: #333;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      color: #2c3e50;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: 50px 0;
+    }
+
+    /* 📚 Course Cards Section */
+    .course-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+    }
+
+    .course-card {
+      background: white;
+      width: 280px;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .course-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .course-card img {
+      width: 100%;
+      border-radius: 10px;
+      object-fit: cover;
+      height: 200px;
+    }
+
+    .course-card h3 {
+      font-size: 1.5rem;
+      color: #2c3e50;
+      margin-top: 15px;
+    }
+
+    .course-card p {
+      font-size: 1rem;
+      color: #7f8c8d;
+      margin-top: 10px;
+    }
+
+    .course-card .btn {
+      display: inline-block;
+      background: linear-gradient(45deg, #f39c12, #e67e22);
+      padding: 10px 25px;
+      color: white;
+      border-radius: 30px;
+      text-decoration: none;
+      font-size: 1rem;
+      margin-top: 20px;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .course-card .btn:hover {
+      transform: translateY(-5px);
+      background: linear-gradient(45deg, #e67e22, #f39c12);
+    }
+
+    /* 📜 Footer */
+    footer {
+      text-align: center;
+      background: #2c3e50;
+      color: white;
+      padding: 15px 0;
+      margin-top: 50px;
+    }
+
+    footer a {
+      color: #f39c12;
+      text-decoration: none;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Our Courses</h1>
+
+  <!-- 📚 Course Cards Section -->
+  <div class="course-container">
+    
+    <!-- Course 1 -->
+    <div class="course-card">
+      <img src="https://imgcdn.stablediffusionweb.com/2024/3/25/50a14ba7-81b4-426b-9e98-161fd01ee516.jpg" alt="Course Image">
+      <h2>Data Science Mastery</h2>
+      <h3>Ethan Williams</h3>
+      <p>Learn the fundamentals of data science and become an expert in analysis, modeling, and visualization.</p>
+      <a href="data.html" class="btn">Start Now</a>
+    </div>
+
+    <!-- Course 2 -->
+    <div class="course-card">
+      <img src="https://img.freepik.com/premium-photo/portrait-happy-business-woman-looking-confident_1108314-334852.jpg" alt="Course Image">
+      <h2>Digital Marketing Pro</h2>
+      <h3>Sophia Carter</h3>
+      <p>Master SEO, social media marketing, and content strategies to drive traffic and grow brands online.</p>
+      <a href="digital.html" class="btn">Start Now</a>
+    </div>
+
+    <!-- Course 3 -->
+    <div class="course-card">
+      <img src="https://static.vecteezy.com/system/resources/previews/038/974/578/non_2x/ai-generated-professional-portrait-of-a-competent-woman-free-photo.jpg" alt="Course Image">
+      <h2>Creative Writing Essentials</h2>
+      <h3>Caled Anderson</h3>
+      <p>Enhance your storytelling skills and unlock your creative potential with our writing techniques.</p>
+      <a href="creative.html" class="btn">Start Now</a>
+    </div>
+
+  
+    <!-- Course 4 -->
+    <div class="course-card">
+      <img src="https://static.vecteezy.com/system/resources/previews/038/974/578/non_2x/ai-generated-professional-portrait-of-a-competent-woman-free-photo.jpg" alt="Course Image">
+      <h2>Web Development 101</h2>
+      <h3>Isabelle Lee</h3>
+      <p>Build dynamic websites from scratch with HTML, CSS, JavaScript, and modern web technologies.</p>
+      <a href="web.html" class="btn">Start Now</a>
+    </div>
+
+  </div>
+
+  <!-- ⚡ Footer -->
+  <footer>
+    <p>&copy; 2025 Edu Learning | All Rights Reserved</p>
+    <p>Want to see more? <a href="courses.html">Browse all courses</a></p>
+  </footer>
+
+</body>
+</html>

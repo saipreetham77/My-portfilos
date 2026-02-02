@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EcoRewards – Live Green, Earn Green</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root{
+      --eco:#27ae60;
+      --dark:#0d3b66;
+      --warn:#f39c12;
+      --bg:#f4f7f9;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+    body{background:var(--bg);color:#333;display:flex;justify-content:center;min-height:100vh;padding:20px}
+    .app{width:100%;max-width:420px;background:#fff;border-radius:25px;box-shadow:0 15px 40px rgba(0,0,0,.2);overflow:hidden}
+
+    header{background:linear-gradient(135deg,var(--eco) 0%,#2ecc71 100%);color:#fff;padding:25px;text-align:center}
+    header h1{font-size:1.6rem}header p{font-size:.9rem;opacity:.9}
+
+    /* balance bar */
+    .balance-bar{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;background:#eafaf1}
+    .coins{display:flex;align-items:center;gap:6px;font-weight:bold;font-size:1.1rem}
+    .coin-icon{width:22px;height:22px;background:var(--warn);border-radius:50%;display:inline-block;text-align:center;line-height:22px;color:#fff;font-size:.8rem}
+
+    /* tabs */
+    .tabs{display:flex;border-bottom:1px solid #e0e0e0}
+    .tab{flex:1;padding:14px;font-size:.95rem;background:none;border:none;cursor:pointer;transition:.3s}
+    .tab.active{color:var(--eco);border-bottom:2px solid var(--eco)}
+
+    /* content */
+    .content{padding:20px;max-height:500px;overflow-y:auto}
+    .pane{display:none}.pane.active{display:block}
+
+    /* tasks */
+    .task{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;transition:.3s}
+    .task:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    .task-icon{font-size:1.6rem}
+    .task-info{flex:1}
+    .task-title{font-weight:600;font-size:.95rem}
+    .task-desc{font-size:.8rem;color:#666;margin-top:2px}
+    .task-reward{display:flex;align-items:center;gap:4px;font-size:.85rem;font-weight:bold;color:var(--warn)}
+    .task-btn{background:var(--eco);color:#fff;border:none;border-radius:20px;padding:6px 12px;font-size:.75rem;cursor:pointer;transition:.3s}
+    .task-btn:disabled{background:#95a5a6;cursor:not-allowed}
+
+    /* claim button */
+    .claim-btn{width:100%;background:var(--eco);color:#fff;border:none;border-radius:20px;padding:12px;font-size:1rem;font-weight:bold;cursor:pointer;margin-top:10px;transition:.3s}
+    .claim-btn:hover{background:#229954}
+
+    /* rewards list */
+    .reward-item{background:#f8f9fa;border-radius:10px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+    .reward-name{font-weight:600}.reward-cost{font-size:.9rem;color:var(--warn)}
+
+    /* history */
+    .history-item{font-size:.85rem;padding:8px 0;border-bottom:1px solid #f0f0f0}
+    .history-item:last-child{border:none}
+
+    /* animations */
+    @keyframes pop{0%{transform:scale(.9)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+    .pop{animation:pop .3s ease}
+
+    /* success modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:10}
+    .modal-content{background:#fff;border-radius:20px;padding:30px;text-align:center;max-width:300px}
+    .modal-content h2{color:var(--eco);margin-bottom:10px}
+    .modal-content button{margin-top:15px;background:var(--eco);color:#fff;border:none;border-radius:20px;padding:10px 20px;cursor:pointer}
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <h1>🌿 EcoRewards</h1>
+    <p>Live green, earn green, save the planet!</p>
+  </header>
+
+  <div class="balance-bar">
+    <span>My Eco-Coins</span>
+    <div class="coins"><span class="coin-icon">₿</span><span id="coinCount">0</span></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('tasks')">Tasks</button>
+    <button class="tab" onclick="switchTab('rewards')">Rewards</button>
+    <button class="tab" onclick="switchTab('history')">History</button>
+  </div>
+
+  <div class="content">
+    <!-- TASKS PANE -->
+    <div id="tasks" class="pane active">
+      <!-- dynamic task cards -->
+    </div>
+
+    <!-- REWARDS PANE -->
+    <div id="rewards" class="pane">
+      <div class="reward-item">
+        <span class="reward-name">🌳 Plant-a-Tree Certificate</span>
+        <span class="reward-cost">50 coins</span>
+      </div>
+      <div class="reward-item">
+        <span class="reward-name">☕ Eco-Friendly Coffee Voucher</span>
+        <span class="reward-cost">30 coins</span>
+      </div>
+      <div class="reward-item">
+        <span class="reward-name">🛍️ Reusable Tote Bag</span>
+        <span class="reward-cost">20 coins</span>
+      </div>
+      <div class="reward-item">
+        <span class="reward-name">🚲 Bike-Shop Discount 10 %</span>
+        <span class="reward-cost">40 coins</span>
+      </div>
+      <button class="claim-btn" onclick="claimReward()">Claim Reward</button>
+    </div>
+
+    <!-- HISTORY PANE -->
+    <div id="history" class="pane">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal" id="successModal">
+  <div class="modal-content">
+    <h2>🎉 Task Completed!</h2>
+    <p id="modalText"></p>
+    <button onclick="closeModal()">Awesome</button>
+  </div>
+</div>
+
+<script>
+  /* ===== DATA ===== */
+  const tasks=[
+    {id:1,icon:"♻️",title:"Recycle Today",desc:"Sort & drop 5 plastic items",coins:5,done:false},
+    {id:2,icon:"🚶",title:"Walk or Cycle",desc:"Travel 2 km car-free",coins:8,done:false},
+    {id:3,icon:"🚿",title:"5-Minute Shower",desc:"Save water & energy",coins:4,done:false},
+    {id:4,icon:"💡",title:"Switch Off",desc:"Turn off unused lights for 1 h",coins:3,done:false},
+    {id:5,icon:"🥤",title:"Say No to Plastic",desc:"Use a reusable bottle all day",coins:6,done:false},
+    {id:6,icon:"🌱",title:"Plant Something",desc:"Plant a herb or tree seedling",coins:10,done:false},
+    {id:7,icon:"📴",title:"Unplug Devices",desc:"Unplug 3 idle chargers/gadgets",coins:3,done:false},
+    {id:8,icon:"🥗",title:"Meat-Free Meal",desc:"Enjoy a plant-based dish",coins:7,done:false}
+  ];
+  let coins=parseInt(localStorage.getItem('ecoCoins'))||0;
+  let history=JSON.parse(localStorage.getItem('ecoHistory'))||[];
+
+  /* ===== INIT ===== */
+  document.getElementById('coinCount').textContent=coins;
+  renderTasks();
+  renderHistory();
+
+  /* ===== FUNCTIONS ===== */
+  function switchTab(pane){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById(pane).classList.add('active');
+  }
+
+  function renderTasks(){
+    const container=document.getElementById('tasks');
+    container.innerHTML='';
+    tasks.forEach(t=>{
+      const div=document.createElement('div');
+      div.className='task';
+      div.innerHTML=`
+        <span class="task-icon">${t.icon}</span>
+        <div class="task-info">
+          <div class="task-title">${t.title}</div>
+          <div class="task-desc">${t.desc}</div>
+        </div>
+        <div class="task-reward"><span class="coin-icon">₿</span>${t.coins}</div>
+        <button class="task-btn" ${t.done?'disabled':''} onclick="completeTask(${t.id})">${t.done?'✓ Done':'Complete'}</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function completeTask(id){
+    const task=tasks.find(t=>t.id===id);
+    if(task.done)return;
+    task.done=true;
+    coins+=task.coins;
+    localStorage.setItem('ecoCoins',coins);
+    document.getElementById('coinCount').textContent=coins;
+    renderTasks();
+    // record history
+    history.unshift({date:new Date().toLocaleString(),task:`${task.icon} ${task.title}`,coins:task.coins});
+    localStorage.setItem('ecoHistory',JSON.stringify(history));
+    renderHistory();
+    // show modal
+    showModal(`You earned ${task.coins} Eco-Coins!`);
+    // small animation
+    document.querySelector('.balance-bar').classList.add('pop');
+    setTimeout(()=>document.querySelector('.balance-bar').classList.remove('pop'),300);
+  }
+
+  function claimReward(){
+    if(coins<20){alert('Need at least 20 coins!');return;}
+    coins-=20;
+    localStorage.setItem('ecoCoins',coins);
+    document.getElementById('coinCount').textContent=coins;
+    showModal('Reward claimed! Show this screen at partner stores.');
+    history.unshift({date:new Date().toLocaleString(),task:'🎁 Reward redeemed',coins:-20});
+    localStorage.setItem('ecoHistory',JSON.stringify(history));
+    renderHistory();
+  }
+
+  function renderHistory(){
+    const hContainer=document.getElementById('history');
+    hContainer.innerHTML='';
+    if(history.length===0)hContainer.innerHTML='<p style="color:#666;font-size:0.9rem">No history yet. Complete a task!</p>';
+    history.forEach(h=>{
+      const div=document.createElement('div');
+      div.className='history-item';
+      div.textContent=`${h.date} | ${h.task} ${h.coins>0?'+':''}${h.coins} coins`;
+      hContainer.appendChild(div);
+    });
+  }
+
+  function showModal(text){
+    document.getElementById('modalText').textContent=text;
+    document.getElementById('successModal').style.display='flex';
+  }
+  function closeModal(){
+    document.getElementById('successModal').style.display='none';
+  }
+</script>
+
+</body>
+</html>
