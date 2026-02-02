@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Biodiversity Quest | 20 Questions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* GLOBAL */
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#000;
+      overflow:hidden;
+    }
+
+    /* SLIDESHOW BACKGROUND */
+    .bg-slideshow{
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      z-index:-2;
+    }
+    .bg-slide{
+      position:absolute;
+      width:100%;height:100%;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      animation:slideShow 24s infinite;
+    }
+    .bg-slide:nth-child(1){animation-delay:0s}
+    .bg-slide:nth-child(2){animation-delay:6s}
+    .bg-slide:nth-child(3){animation-delay:12s}
+    .bg-slide:nth-child(4){animation-delay:18s}
+
+    @keyframes slideShow{
+      0%,20%{opacity:1}
+      25%,100%{opacity:0}
+    }
+
+    /* OVERLAY FOR READABILITY */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:-1;
+    }
+
+    /* QUIZ CARD */
+    .quiz-card{
+      width:90%;max-width:700px;
+      background:rgba(255,255,255,.92);
+      border-radius:20px;
+      padding:35px 30px;
+      box-shadow:0 15px 40px rgba(0,0,0,.5);
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    header{
+      text-align:center;
+    }
+    header h1{font-size:2.1rem;color:#0d3b66}
+    header p{font-size:1rem;color:#555}
+
+    /* PROGRESS */
+    .progress-bar{
+      height:10px;border-radius:5px;background:#ddd;overflow:hidden;
+    }
+    .progress-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#2ecc71 0%, #27ae60 100%);
+      transition:width .4s ease;
+    }
+
+    /* QUESTION */
+    .question-box{
+      min-height:90px;
+    }
+    .question-text{
+      font-size:1.25rem;color:#222;line-height:1.4
+    }
+    .question-img{
+      width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-top:10px;
+    }
+
+    /* OPTIONS */
+    .options{
+      display:grid;gap:12px;
+    }
+    .option-btn{
+      background:#fff;border:2px solid #ccc;border-radius:10px;padding:14px;font-size:1rem;cursor:pointer;transition:.25s;
+    }
+    .option-btn:hover{border-color:#2ecc71;transform:translateY(-2px)}
+    .option-btn.correct{border-color:#27ae60;background:#d4edda}
+    .option-btn.incorrect{border-color:#e63946;background:#f8d7da}
+    .option-btn:disabled{cursor:not-allowed;opacity:.8}
+
+    /* NAV */
+    .nav{
+      display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+    }
+    .nav button{
+      border:none;border-radius:25px;padding:10px 22px;font-size:1rem;cursor:pointer;transition:.3s;
+    }
+    #prevBtn{background:#95a5a6;color:#fff}
+    #nextBtn{background:#2ecc71;color:#fff}
+    #nextBtn:disabled{background:#95a5a6;cursor:not-allowed}
+    .score-display{font-weight:600;color:#0d3b66}
+
+    /* RESULTS */
+    .result-screen{
+      text-align:center;display:none;
+    }
+    .result-screen h2{font-size:2rem;margin-bottom:15px;color:#0d3b66}
+    .result-screen p{font-size:1.1rem;margin-bottom:20px;color:#444}
+    #restartBtn{background:#2ecc71;color:#fff;border:none;border-radius:25px;padding:12px 28px;font-size:1rem;cursor:pointer}
+
+    /* RESPONSIVE */
+    @media(max-width:600px){
+      .quiz-card{padding:25px 20px}
+      header h1{font-size:1.7rem}
+      .question-text{font-size:1.1rem}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background slideshow -->
+  <div class="bg-slideshow">
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1441973101538-656170777609?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1504553101394-27b293796dcc?auto=format&fit=crop&w=1350&q=80');"></div>
+  </div>
+  <div class="overlay"></div>
+
+  <!-- Quiz Card -->
+  <div class="quiz-card">
+    <header>
+      <h1>🦋 Biodiversity Quest</h1>
+      <p>Test your knowledge on Earth's amazing variety of life</p>
+    </header>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="question-box">
+      <div class="question-text" id="questionText"></div>
+      <img class="question-img" id="questionImg" alt="question image">
+    </div>
+
+    <div class="options" id="optionsContainer"></div>
+
+    <div class="nav">
+      <button id="prevBtn" onclick="navigate(-1)">← Prev</button>
+      <span class="score-display">Score: <span id="score">0</span>/20</span>
+      <button id="nextBtn" onclick="navigate(1)" disabled>Next →</button>
+    </div>
+
+    <div class="result-screen" id="resultScreen">
+      <h2 id="resultTitle"></h2>
+      <p id="resultMsg"></p>
+      <button id="restartBtn" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+  </div>
+
+  <script>
+    /* ===== BIODIVERSITY QUESTION BANK (20 Questions) ===== */
+    const questions=[
+      {
+        q:"What is biodiversity?",
+        img:"https://images.unsplash.com/photo-1441973101538-656170777609?auto=format&fit=crop&w=800&q=60",
+        opts:["Only animals in a forest","Variety of life in all forms","Number of plant species","Genetic variation in crops"],
+        correct:1,
+        fact:"Biodiversity includes plants, animals, fungi, microorganisms and their ecosystems."
+      },
+      {
+        q:"Which ecosystem hosts the highest species diversity per unit area?",
+        img:"https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=800&q=60",
+        opts:["Coral reefs","Tropical rainforests","Temperate grasslands","Arctic tundra"],
+        correct:0,
+        fact:"Coral reefs support ~25 % of marine species in <1 % of ocean area."
+      },
+      {
+        q:"Approximately how many species have been scientifically described?",
+        img:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=60",
+        opts:["~2 million","~8 million","~20 million","~50 million"],
+        correct:0,
+        fact:"About 2 million species are formally described; estimates for total Earthly species range 8-20 million."
+      },
+      {
+        q:"What is the current rate of species extinction compared to the natural background rate?",
+        img:"https://images.unsplash.com/photo-1504553101394-27b293796dcc?auto=format&fit=crop&w=800&q=60",
+        opts:["Equal","10 times higher","50-100 times higher","1000 times higher"],
+        correct:3,
+        fact:"Human-driven extinction rates are 100–1 000× higher than the natural background."
+      },
+      {
+        q:"Which group is considered a ‘keystone species’ in many kelp-forest ecosystems?",
+        img:"https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=800&q=60",
+        opts:["Sea otters","Tuna","Sharks","Algae"],
+        correct:0,
+        fact:"Sea otters control sea-urchin populations, preventing overgrazing of kelp."
+      },
+      {
+        q:"What is the primary driver of biodiversity loss on land?",
+        img:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=60",
+        opts:["Climate change","Habitat destruction","Pollution","Invasive species"],
+        correct:1,
+        fact:"Habitat loss—mainly from agriculture, logging & development—is the leading cause."
+      },
+      {
+        q:"Which vertebrate group has seen the greatest population declines since 1970?",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["Mammals","Birds","Fish","Amphibians"],
+        correct:3,
+        fact:"Amphibians face rapid declines (habitat loss, disease, climate change)."
+      },
+      {
+        q:"Pollinators such as bees and butterflies are important because:",
+        img:"https://images.unsplash.com/photo-1441829266145-6d4bbc4fd27c?auto=format&fit=crop&w=800&q=60",
+        opts:["They produce honey","They control pests","They pollinate ~75 % of global crops","They beautify gardens"],
+        correct:2,
+        fact:"~75 % of leading food crops benefit from animal pollination."
+      },
+      {
+        q:"What is genetic diversity within a species?",
+        img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=60",
+        opts:["Number of chromosomes","Variety of genes/alleles","Population size","Number of mutations"],
+        correct:1,
+        fact:"Genetic diversity is the variety of genes/alleles—crucial for adaptation & survival."
+      },
+      {
+        q:"Which ecosystem service controls floods and recharges groundwater?",
+        img:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=60",
+        opts:["Water purification","Climate regulation","Soil formation","Water-cycle regulation"],
+        correct:3,
+        fact:"Wetlands & forests regulate water flow, reducing flood risk and filtering water."
+      },
+      {
+        q:"The ‘One Health’ approach links:",
+        img:"https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=800&q=60",
+        opts:["Human, animal & environmental health","Land, sea & air","Plants, fungi & bacteria","Genes, species & ecosystems"],
+        correct:0,
+        fact:"One Health recognises that human, animal & ecosystem health are interconnected."
+      },
+      {
+        q:"Which international treaty aims at protecting endangered species from trade?",
+        img:"https://images.unsplash.com/photo-1581093458791-9d2fb0d6c7c8?auto=format&fit=crop&w=800&q=60",
+        opts:["Ramsar Convention","CITES","CBD","IUCN Red List"],
+        correct:1,
+        fact:"CITES (Convention on International Trade in Endangered Species) regulates wildlife trade."
+      },
+      {
+        q:"What is bioprospecting?",
+        img:"https://images.unsplash.com/photo-1589134220273-92116139a67a?auto=format&fit=crop&w=800&q=60",
+        opts:["Hunting invasive species","Exploring nature for useful compounds","Mapping genomes","Counting species"],
+        correct:1,
+        fact:"Bioprospecting searches wild organisms for new medicines, crops or industrial enzymes."
+      },
+      {
+        q:"Which practice helps maintain agricultural biodiversity?",
+        img:"https://images.unsplash.com/photo-1574943320219-553eb213f72d?auto=format&fit=crop&w=800&q=60",
+        opts:["Monoculture","Crop rotation & mixed farming","Heavy pesticide use","Single variety crops"],
+        correct:1,
+        fact:"Diverse farming systems preserve multiple crop varieties and support pollinators & soil life."
+      },
+      {
+        q:"Invasive species can harm native biodiversity by:",
+        img:"https://images.unsplash.com/photo-1565799557189-1f44d6f0e0d8?auto=format&fit=crop&w=800&q=60",
+        opts:["Competing for resources","Introducing diseases","Preying on natives","All of the above"],
+        correct:3,
+        fact:"Invasives may outcompete, prey on, or bring diseases to which natives have no defence."
+      },
+      {
+        q:"What is an ‘ecosystem engineer’?",
+        img:"https://images.unsplash.com/photo-1567667541145-d9d5c2c3d9d6?auto=format&fit=crop&w=800&q=60",
+        opts:["Human modifying habitats","Species that create/modify habitats","Machine restoring ecosystems","Scientist studying systems"],
+        correct:1,
+        fact:"Beavers (dams) or corals (reefs) physically modify environments, benefiting other species."
+      },
+      {
+        q:"Which activity directly supports citizen-science biodiversity monitoring?",
+        img:"https://images.unsplash.com/photo-1602860602133-87972d91c5e2?auto=format&fit=crop&w=800&q=60",
+        opts:["iNaturalist observations","Watching nature documentaries","Zoo visits","Buying eco-products"],
+        correct:0,
+        fact:"Apps like iNaturalist let people upload species photos, aiding scientists’ distribution maps."
+      },
+      {
+        q:"What is the role of seed banks like Svalbard?",
+        img:"https://images.unsplash.com/photo-1602860602133-87972d91c5e2?auto=format&fit=crop&w=800&q=60",
+        opts:["Store money","Preserve genetic diversity of crops","Fund research","Trade seeds commercially"],
+        correct:1,
+        fact:"Seed banks conserve genetic diversity of food crops and their wild relatives for future breeding."
+      },
+      {
+        q:"Ecotourism can aid biodiversity when it:",
+        img:"https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?auto=format&fit=crop&w=800&q=60",
+        opts:["Brings income to local conservation","Increases habitat disturbance","Feeds wildlife","Promotes souvenir collection"],
+        correct:0,
+        fact:"Well-managed ecotourism provides funds and incentives for communities to protect wildlife habitats."
+      },
+      {
+        q:"Which action can individuals take to help biodiversity locally?",
+        img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=60",
+        opts:["Plant native species in gardens","Use pesticides freely","Remove all leaf litter","Buy exotic pets"],
+        correct:0,
+        fact:"Native plants support local insects, birds and pollinators—creating mini-habitats right outside your door."
+      }
+    ];
+
+    /* ===== QUIZ LOGIC ===== */
+    let idx=0,score=0,selected=null,answered=false;
+
+    function loadQ(){
+      answered=false;selected=null;
+      const q=questions[idx];
+      document.getElementById('questionText').textContent=q.q;
+      document.getElementById('questionImg').src=q.img;
+      const container=document.getElementById('optionsContainer');
+      container.innerHTML='';
+      q.opts.forEach((opt,i)=>{
+        const btn=document.createElement('button');
+        btn.className='option-btn';btn.textContent=opt;btn.onclick=()=>select(i);
+        container.appendChild(btn);
+      });
+      updateNav();
+    }
+    function select(i){
+      if(answered)return;
+      answered=true;selected=i;
+      const q=questions[idx];
+      const btns=document.querySelectorAll('.option-btn');
+      btns.forEach((b,idx)=>{
+        b.disabled=true;
+        if(idx===q.correct)b.classList.add('correct');
+        else if(idx===i)b.classList.add('incorrect');
+      });
+      if(i===q.correct)score++;
+      document.getElementById('score').textContent=score;
+    }
+    function navigate(dir){
+      if(dir===1&&!answered)return;
+      idx=Math.max(0,Math.min(questions.length-1,idx+dir));
+      if(idx===questions.length-1)showResult();
+      else loadQ();
+    }
+    function updateNav(){
+      document.getElementById('prevBtn').disabled=idx===0;
+      document.getElementById('nextBtn').disabled=!answered;
+      document.getElementById('progressFill').style.width=`${(idx+1)/questions.length*100}%`;
+    }
+    function showResult(){
+      document.getElementById('questionContainer').style.display='none';
+      document.querySelector('.nav').style.display='none';
+      const res=document.getElementById('resultScreen');
+      res.style.display='block';
+      const pct=Math.round(score/questions.length*100);
+      let msg='';
+      if(pct>=90)msg='Outstanding biodiversity champion! 🦋';
+      else if(pct>=70)msg='Great job, eco-hero! 🌿';
+      else if(pct>=50)msg='Good effort, keep exploring! 🔍';
+      else msg='Keep learning about nature! 📚';
+      document.getElementById('resultTitle').textContent=`You scored ${score}/20 (${pct}%)`;
+      document.getElementById('resultMsg').textContent=msg;
+    }
+    function restartQuiz(){location.reload();}
+
+    /* ===== INIT ===== */
+    loadQ();
+  </script>
+</body>
+</html>

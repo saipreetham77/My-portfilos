@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green City Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 90%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 150px;
+            margin: 5px;
+            transition: transform 0.3s;
+        }
+
+        .stat:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .money { color: #27ae60; }
+        .happiness { color: #3498db; }
+        .environment { color: #27ae60; }
+        .population { color: #e74c3c; }
+
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            margin: 20px 0;
+            background: #ecf0f1;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: #95a5a6;
+            border: 1px solid #7f8c8d;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .building {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .empty { background: #95a5a6; }
+        .park { background: #27ae60; }
+        .house { background: #e74c3c; }
+        .shop { background: #f39c12; }
+        .factory { background: #34495e; }
+        .solar { background: #f1c40f; }
+
+        .buildings-panel {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .building-option {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .building-option:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .building-option.selected {
+            background: #2c3e50;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .message {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .message.show {
+            opacity: 1;
+        }
+
+        .success { background: #d4edda; color: #155724; }
+        .warning { background: #fff3cd; color: #856404; }
+        .danger { background: #f8d7da; color: #721c24; }
+
+        .reset-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 30px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .game-info {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🌱 Green City Builder 🏙️</h1>
+        <p class="game-info">Design and manage your sustainable city! Balance economy and environment.</p>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">Money</div>
+                <div class="stat-value money" id="money">$1000</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Happiness</div>
+                <div class="stat-value happiness" id="happiness">50%</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Environment</div>
+                <div class="stat-value environment" id="environment">80%</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Population</div>
+                <div class="stat-value population" id="population">0</div>
+            </div>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <div class="buildings-panel">
+            <div class="building-option selected" data-type="park" data-cost="50">
+                🌳 Park ($50)
+            </div>
+            <div class="building-option" data-type="house" data-cost="100">
+                🏠 House ($100)
+            </div>
+            <div class="building-option" data-type="shop" data-cost="150">
+                🏪 Shop ($150)
+            </div>
+            <div class="building-option" data-type="factory" data-cost="200">
+                🏭 Factory ($200)
+            </div>
+            <div class="building-option" data-type="solar" data-cost="300">
+                ☀️ Solar Panel ($300)
+            </div>
+        </div>
+
+        <div class="city-grid" id="cityGrid"></div>
+
+        <button class="reset-btn" onclick="resetGame()">Reset City</button>
+    </div>
+
+    <script>
+        let gameState = {
+            money: 1000,
+            happiness: 50,
+            environment: 80,
+            population: 0,
+            selectedBuilding: 'park',
+            grid: Array(64).fill(null)
+        };
+
+        const buildingTypes = {
+            park: { emoji: '🌳', income: 0, happiness: 5, environment: 10, cost: 50 },
+            house: { emoji: '🏠', income: 20, happiness: 3, environment: -2, cost: 100 },
+            shop: { emoji: '🏪', income: 30, happiness: 2, environment: -3, cost: 150 },
+            factory: { emoji: '🏭', income: 50, happiness: -5, environment: -10, cost: 200 },
+            solar: { emoji: '☀️', income: 10, happiness: 2, environment: 15, cost: 300 }
+        };
+
+        function initGrid() {
+            const grid = document.getElementById('cityGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 64; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell empty';
+                cell.dataset.index = i;
+                cell.onclick = () => placeBuilding(i);
+                grid.appendChild(cell);
+            }
+        }
+
+        function placeBuilding(index) {
+            const building = buildingTypes[gameState.selectedBuilding];
+            
+            if (gameState.money < building.cost) {
+                showMessage('Not enough money!', 'danger');
+                return;
+            }
+
+            if (gameState.grid[index]) {
+                showMessage('Cell already occupied!', 'warning');
+                return;
+            }
+
+            gameState.money -= building.cost;
+            gameState.grid[index] = gameState.selectedBuilding;
+            gameState.population += gameState.selectedBuilding === 'house' ? 4 : 0;
+            
+            updateStats();
+            updateGrid();
+            showMessage(`${building.emoji} Built successfully!`, 'success');
+        }
+
+        function updateStats() {
+            let income = 0;
+            let happinessChange = 0;
+            let environmentChange = 0;
+
+            gameState.grid.forEach(buildingType => {
+                if (buildingType) {
+                    const building = buildingTypes[buildingType];
+                    income += building.income;
+                    happinessChange += building.happiness;
+                    environmentChange += building.environment;
+                }
+            });
+
+            gameState.money += income;
+            gameState.happiness = Math.max(0, Math.min(100, 50 + happinessChange));
+            gameState.environment = Math.max(0, Math.min(100, 80 + environmentChange));
+
+            document.getElementById('money').textContent = `$${gameState.money}`;
+            document.getElementById('happiness').textContent = `${gameState.happiness}%`;
+            document.getElementById('environment').textContent = `${gameState.environment}%`;
+            document.getElementById('population').textContent = gameState.population;
+
+            // Check win/lose conditions
+            if (gameState.money < 0) {
+                showMessage('Game Over! You ran out of money!', 'danger');
+                setTimeout(resetGame, 3000);
+            } else if (gameState.environment < 20) {
+                showMessage('Game Over! Environment too polluted!', 'danger');
+                setTimeout(resetGame, 3000);
+            } else if (gameState.happiness < 20) {
+                showMessage('Game Over! Citizens are too unhappy!', 'danger');
+                setTimeout(resetGame, 3000);
+            }
+        }
+
+        function updateGrid() {
+            const cells = document.querySelectorAll('.cell');
+            gameState.grid.forEach((buildingType, index) => {
+                const cell = cells[index];
+                if (buildingType) {
+                    cell.className = `cell ${buildingType}`;
+                    cell.innerHTML = `<div class="building">${buildingTypes[buildingType].emoji}</div>`;
+                } else {
+                    cell.className = 'cell empty';
+                    cell.innerHTML = '';
+                }
+            });
+        }
+
+        function selectBuilding(type) {
+            gameState.selectedBuilding = type;
+            document.querySelectorAll('.building-option').forEach(option => {
+                option.classList.remove('selected');
+                if (option.dataset.type === type) {
+                    option.classList.add('selected');
+                }
+            });
+        }
+
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message ${type} show`;
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 2000);
+        }
+
+        function resetGame() {
+            gameState = {
+                money: 1000,
+                happiness: 50,
+                environment: 80,
+                population: 0,
+                selectedBuilding: 'park',
+                grid: Array(64).fill(null)
+            };
+            updateStats();
+            updateGrid();
+            showMessage('New city started!', 'success');
+        }
+
+        // Initialize building selection
+        document.querySelectorAll('.building-option').forEach(option => {
+            option.onclick = () => selectBuilding(option.dataset.type);
+        });
+
+        // Start the game
+        initGrid();
+        updateStats();
+
+        // Add income generation every 3 seconds
+        setInterval(() => {
+            updateStats();
+        }, 3000);
+    </script>
+</body>
+</html>

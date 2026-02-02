@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Climate-Change Quiz | 20 Questions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* GLOBAL */
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Helvetica,Arial,sans-serif}
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#000;
+      overflow:hidden;
+    }
+
+    /* SLIDESHOW BACKGROUND */
+    .bg-slideshow{
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      z-index:-2;
+    }
+    .bg-slide{
+      position:absolute;
+      width:100%;height:100%;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      animation:slideShow 24s infinite;
+    }
+    .bg-slide:nth-child(1){animation-delay:0s}
+    .bg-slide:nth-child(2){animation-delay:6s}
+    .bg-slide:nth-child(3){animation-delay:12s}
+    .bg-slide:nth-child(4){animation-delay:18s}
+
+    @keyframes slideShow{
+      0%,20%{opacity:1}
+      25%,100%{opacity:0}
+    }
+
+    /* OVERLAY FOR READABILITY */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:-1;
+    }
+
+    /* QUIZ CARD */
+    .quiz-card{
+      width:90%;max-width:700px;
+      background:rgba(255,255,255,.92);
+      border-radius:20px;
+      padding:35px 30px;
+      box-shadow:0 15px 40px rgba(0,0,0,.5);
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    header{
+      text-align:center;
+    }
+    header h1{font-size:2.1rem;color:#0d3b66}
+    header p{font-size:1rem;color:#555}
+
+    /* PROGRESS */
+    .progress-bar{
+      height:10px;border-radius:5px;background:#ddd;overflow:hidden;
+    }
+    .progress-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#00a6fb 0%, #00f5d4 100%);
+      transition:width .4s ease;
+    }
+
+    /* QUESTION */
+    .question-box{
+      min-height:90px;
+    }
+    .question-text{
+      font-size:1.25rem;color:#222;line-height:1.4
+    }
+    .question-img{
+      width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-top:10px;
+    }
+
+    /* OPTIONS */
+    .options{
+      display:grid;gap:12px;
+    }
+    .option-btn{
+      background:#fff;border:2px solid #ccc;border-radius:10px;padding:14px;font-size:1rem;cursor:pointer;transition:.25s;
+    }
+    .option-btn:hover{border-color:#00a6fb;transform:translateY(-2px)}
+    .option-btn.correct{border-color:#27ae60;background:#d4edda}
+    .option-btn.incorrect{border-color:#e63946;background:#f8d7da}
+    .option-btn:disabled{cursor:not-allowed;opacity:.8}
+
+    /* NAV */
+    .nav{
+      display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+    }
+    .nav button{
+      border:none;border-radius:25px;padding:10px 22px;font-size:1rem;cursor:pointer;transition:.3s;
+    }
+    #prevBtn{background:#95a5a6;color:#fff}
+    #nextBtn{background:#00a6fb;color:#fff}
+    #nextBtn:disabled{background:#95a5a6;cursor:not-allowed}
+    .score-display{font-weight:600;color:#0d3b66}
+
+    /* RESULTS */
+    .result-screen{
+      text-align:center;display:none;
+    }
+    .result-screen h2{font-size:2rem;margin-bottom:15px;color:#0d3b66}
+    .result-screen p{font-size:1.1rem;margin-bottom:20px;color:#444}
+    #restartBtn{background:#00a6fb;color:#fff;border:none;border-radius:25px;padding:12px 28px;font-size:1rem;cursor:pointer}
+
+    /* RESPONSIVE */
+    @media(max-width:600px){
+      .quiz-card{padding:25px 20px}
+      header h1{font-size:1.7rem}
+      .question-text{font-size:1.1rem}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background slideshow -->
+  <div class="bg-slideshow">
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1515569067071-ec3b51335dd0?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1454789476662-53eb23ba5907?auto=format&fit=crop&w=1350&q=80');"></div>
+  </div>
+  <div class="overlay"></div>
+
+  <!-- Quiz Card -->
+  <div class="quiz-card">
+    <header>
+      <h1>🌍 Climate-Change Quiz</h1>
+      <p>Test your knowledge on causes, impacts & solutions</p>
+    </header>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="question-box">
+      <div class="question-text" id="questionText"></div>
+      <img class="question-img" id="questionImg" alt="question image">
+    </div>
+
+    <div class="options" id="optionsContainer"></div>
+
+    <div class="nav">
+      <button id="prevBtn" onclick="navigate(-1)">← Prev</button>
+      <span class="score-display">Score: <span id="score">0</span>/20</span>
+      <button id="nextBtn" onclick="navigate(1)" disabled>Next →</button>
+    </div>
+
+    <div class="result-screen" id="resultScreen">
+      <h2 id="resultTitle"></h2>
+      <p id="resultMsg"></p>
+      <button id="restartBtn" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+  </div>
+
+  <script>
+    /* ===== QUESTION BANK (20 Questions) ===== */
+    const questions=[
+      {
+        q:"Which sector is the largest contributor to global greenhouse-gas emissions?",
+        img:"https://images.unsplash.com/photo-1515569067071-ec3b51335dd0?auto=format&fit=crop&w=800&q=60",
+        opts:["Electricity & heat production","Transportation","Agriculture","Industry"],
+        correct:0,
+        fact:"Power generation burns fossil fuels, releasing ~25 % of global GHGs."
+      },
+      {
+        q:"Approximately how much has average global surface temperature risen since the late 19th century?",
+        img:"https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60",
+        opts:["0.3 °C","0.8 °C","1.1 °C","2.0 °C"],
+        correct:2,
+        fact:"NASA & NOAA measure a rise of ~1.1 °C (2 °F) since 1880."
+      },
+      {
+        q:"What is the main cause of current sea-level rise?",
+        img:"https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=800&q=60",
+        opts:["Tectonic plate movement","Melting land-based ice + thermal expansion","Increased rainfall","Moon’s gravity shift"],
+        correct:1,
+        fact:"Sea-level rise is driven by melting glaciers/ice sheets plus seawater expanding as it warms."
+      },
+      {
+        q:"Which extreme weather event is becoming more frequent and intense due to climate change?",
+        img:"https://images.unsplash.com/photo-1454789476662-53eb23ba5907?auto=format&fit=crop&w=800&q=60",
+        opts:["Heat-waves","Blizzards","Tornadoes","All of the above"],
+        correct:3,
+        fact:"Heat-waves, heavy rainfall, hurricanes & some droughts are increasing with warming."
+      },
+      {
+        q:"The Paris Agreement seeks to limit global warming to:",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["Below 4 °C","Below 2 °C, ideally 1.5 °C","Exactly 1 °C","Below 3 °C"],
+        correct:1,
+        fact:"Parties agreed to keep warming “well below 2 °C” and pursue efforts to limit it to 1.5 °C above pre-industrial levels."
+      },
+      {
+        q:"Which region is warming the fastest?",
+        img:"https://images.unsplash.com/photo-1508974239320-0a029497e820?auto=format&fit=crop&w=800&q=60",
+        opts:["Amazon Basin","Arctic","Sahel","Tibetan Plateau"],
+        correct:1,
+        fact:"The Arctic is heating roughly twice as fast as the global average (Arctic amplification)."
+      },
+      {
+        q:"What is the most abundant anthropogenic greenhouse gas?",
+        img:"https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?auto=format&fit=crop&w=800&q=60",
+        opts:["Methane (CH₄)","Carbon dioxide (CO₂)","Nitrous oxide (N₂O)","Fluorinated gases"],
+        correct:1,
+        fact:"CO₂ accounts for ~76 % of total GHG emissions from human activities."
+      },
+      {
+        q:" thawing permafrost releases which two main greenhouse gases?",
+        img:"https://images.unsplash.com/photo-1475724017904-b712052c192a?auto=format&fit=crop&w=800&q=60",
+        opts:["CO₂ + CH₄","N₂O + CO₂","CH₄ + N₂O","CO₂ + O₃"],
+        correct:0,
+        fact:"Thawing permafrost emits carbon dioxide and methane from decomposing organic matter."
+      },
+      {
+        q:"Which weather phenomenon brings heavy rains to parts of South America but drought to Australia/Indonesia?",
+        img:"https://images.unsplash.com/photo-1561484930-998b6a7b0e8d?auto=format&fit=crop&w=800&q=60",
+        opts:["La Niña","El Niño","Indian Ocean Dipole","Madden-Julian Oscillation"],
+        correct:1,
+        fact:"El Niño events redistribute global rainfall, causing floods in some regions and droughts in others."
+      },
+      {
+        q:"Climate change is projected to increase the frequency of:",
+        img:"https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?auto=format&fit=crop&w=800&q=60",
+        opts:["Category 4-5 hurricanes","Clear-sky days","Low-pressure systems","Solar eclipses"],
+        correct:0,
+        fact:"Warmer oceans provide more energy for the most intense tropical cyclones."
+      },
+      {
+        q:"What is the main source of methane emissions linked to human activity?",
+        img:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=800&q=60",
+        opts:["Rice cultivation","Oil & gas systems","Livestock","All of the above"],
+        correct:3,
+        fact:"Agriculture (enteric fermentation + rice) and fossil-fuel extraction are top methane sources."
+      },
+      {
+        q:"Which feedback loop accelerates warming as sea-ice melts?",
+        img:"https://images.unsplash.com/photo-1551522435-a131bf5e493b?auto=format&fit=crop&w=800&q=60",
+        opts:["Ice-albedo feedback","Cloud feedback","Carbon-cycle feedback","Water-vapour feedback"],
+        correct:0,
+        fact:"Loss of bright ice reduces surface albedo, causing more solar absorption and further melt."
+      },
+      {
+        q:"Urban heat-islands are primarily caused by:",
+        img:"https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=60",
+        opts:["Tall buildings blocking wind","Dark impervious surfaces absorbing heat","Vehicle exhaust","All of the above"],
+        correct:3,
+        fact:"Cities can be several degrees warmer due to heat-absorbing materials, reduced vegetation & waste heat."
+      },
+      {
+        q:"Climate-linked ocean heating threatens which ecosystem the most?",
+        img:"https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=800&q=60",
+        opts:["Kelp forests","Coral reefs","Seagrass meadows","Deep-sea vents"],
+        correct:1,
+        fact:"Corals suffer mass bleaching when water temperatures exceed long-term summer averages by ~1 °C."
+      },
+      {
+        q:"Which renewable source currently provides the largest share of global low-carbon electricity?",
+        img:"https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=800&q=60",
+        opts:["Solar PV","Wind","Hydroelectric","Nuclear"],
+        correct:2,
+        fact:"Hydropower produces ~16 % of world electricity—more than all other renewables combined."
+      },
+      {
+        q:"What is meant by ‘net-zero’ emissions?",
+        img:"https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=60",
+        opts:["No human-made GHGs at all","Balancing remaining emissions with removal","Offsetting only CO₂","Cutting emissions 50 %"],
+        correct:1,
+        fact:"Net-zero means any residual emissions are balanced by an equal amount of atmospheric removal."
+      },
+      {
+        q:"Climate models project that without mitigation, global warming could reach roughly:",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["1.5 °C by 2050","2 °C by 2100","4 °C+ by 2100","6 °C by 2200"],
+        correct:2,
+        fact:"High-emission scenarios (SSP5-8.5) suggest warming could surpass 4 °C by 2100."
+      },
+      {
+        q:"Which sector is among the hardest to decarbonise?",
+        img:"https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=60",
+        opts:["Electricity","Heavy industry (cement, steel)","Passenger cars","Lighting"],
+        correct:1,
+        fact:"Industries requiring high-temperature heat & chemical processes need new tech (green hydrogen, CCS)."
+      },
+      {
+        q:"Aerosols (small particles) in the atmosphere:",
+        img:"https://images.unsplash.com/photo-1506422748879-887454d9df12?auto=format&fit=crop&w=800&q=60",
+        opts:["Only warm the planet","Only cool the planet","Have no climate effect","Cool by reflecting sunlight but warm by absorbing heat"],
+        correct:3,
+        fact:"Most aerosols reflect sunlight (cooling), but black carbon absorbs heat and darkens surfaces."
+      },
+      {
+        q:"Adaptation to climate change refers to:",
+        img:"https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=800&q=60",
+        opts:["Reducing emissions","Adjusting to impacts","Geo-engineering","International treaties"],
+        correct:1,
+        fact:"Adaptation = adjusting natural/human systems to actual or expected climate effects (e.g., flood defences, drought-resistant crops)."
+      }
+    ];
+
+    /* ===== QUIZ LOGIC ===== */
+    let idx=0,score=0,selected=null,answered=false;
+
+    function loadQ(){
+      answered=false;selected=null;
+      const q=questions[idx];
+      document.getElementById('questionText').textContent=q.q;
+      document.getElementById('questionImg').src=q.img;
+      const container=document.getElementById('optionsContainer');
+      container.innerHTML='';
+      q.opts.forEach((opt,i)=>{
+        const btn=document.createElement('button');
+        btn.className='option-btn';btn.textContent=opt;btn.onclick=()=>select(i);
+        container.appendChild(btn);
+      });
+      updateNav();
+    }
+    function select(i){
+      if(answered)return;
+      answered=true;selected=i;
+      const q=questions[idx];
+      const btns=document.querySelectorAll('.option-btn');
+      btns.forEach((b,idx)=>{
+        b.disabled=true;
+        if(idx===q.correct)b.classList.add('correct');
+        else if(idx===i)b.classList.add('incorrect');
+      });
+      if(i===q.correct)score++;
+      document.getElementById('score').textContent=score;
+    }
+    function navigate(dir){
+      if(dir===1&&!answered)return;
+      idx=Math.max(0,Math.min(questions.length-1,idx+dir));
+      if(idx===questions.length-1)showResult();
+      else loadQ();
+    }
+    function updateNav(){
+      document.getElementById('prevBtn').disabled=idx===0;
+      document.getElementById('nextBtn').disabled=!answered;
+      document.getElementById('progressFill').style.width=`${(idx+1)/questions.length*100}%`;
+    }
+    function showResult(){
+      document.getElementById('questionContainer').style.display='none';
+      document.querySelector('.nav').style.display='none';
+      const res=document.getElementById('resultScreen');
+      res.style.display='block';
+      const pct=Math.round(score/questions.length*100);
+      let msg='';
+      if(pct>=90)msg='Outstanding! 🌍✨';
+      else if(pct>=70)msg='Great job! 🌿';
+      else if(pct>=50)msg='Good effort! 📚';
+      else msg='Keep learning! 🌱';
+      document.getElementById('resultTitle').textContent=`You scored ${score}/20 (${pct}%)`;
+      document.getElementById('resultMsg').textContent=msg;
+    }
+    function restartQuiz(){location.reload();}
+
+    /* ===== INIT ===== */
+    loadQ();
+  </script>
+</body>
+</html>

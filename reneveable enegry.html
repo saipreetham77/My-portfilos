@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Renewable Energy Quiz | 20 Questions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* GLOBAL */
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#000;
+      overflow:hidden;
+    }
+
+    /* SLIDESHOW BACKGROUND */
+    .bg-slideshow{
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      z-index:-2;
+    }
+    .bg-slide{
+      position:absolute;
+      width:100%;height:100%;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      animation:slideShow 24s infinite;
+    }
+    .bg-slide:nth-child(1){animation-delay:0s}
+    .bg-slide:nth-child(2){animation-delay:6s}
+    .bg-slide:nth-child(3){animation-delay:12s}
+    .bg-slide:nth-child(4){animation-delay:18s}
+
+    @keyframes slideShow{
+      0%,20%{opacity:1}
+      25%,100%{opacity:0}
+    }
+
+    /* OVERLAY FOR READABILITY */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:-1;
+    }
+
+    /* QUIZ CARD */
+    .quiz-card{
+      width:90%;max-width:700px;
+      background:rgba(255,255,255,.92);
+      border-radius:20px;
+      padding:35px 30px;
+      box-shadow:0 15px 40px rgba(0,0,0,.5);
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    header{
+      text-align:center;
+    }
+    header h1{font-size:2.1rem;color:#0d3b66}
+    header p{font-size:1rem;color:#555}
+
+    /* PROGRESS */
+    .progress-bar{
+      height:10px;border-radius:5px;background:#ddd;overflow:hidden;
+    }
+    .progress-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#00a6fb 0%, #00f5d4 100%);
+      transition:width .4s ease;
+    }
+
+    /* QUESTION */
+    .question-box{
+      min-height:90px;
+    }
+    .question-text{
+      font-size:1.25rem;color:#222;line-height:1.4
+    }
+    .question-img{
+      width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-top:10px;
+    }
+
+    /* OPTIONS */
+    .options{
+      display:grid;gap:12px;
+    }
+    .option-btn{
+      background:#fff;border:2px solid #ccc;border-radius:10px;padding:14px;font-size:1rem;cursor:pointer;transition:.25s;
+    }
+    .option-btn:hover{border-color:#00a6fb;transform:translateY(-2px)}
+    .option-btn.correct{border-color:#27ae60;background:#d4edda}
+    .option-btn.incorrect{border-color:#e63946;background:#f8d7da}
+    .option-btn:disabled{cursor:not-allowed;opacity:.8}
+
+    /* NAV */
+    .nav{
+      display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+    }
+    .nav button{
+      border:none;border-radius:25px;padding:10px 22px;font-size:1rem;cursor:pointer;transition:.3s;
+    }
+    #prevBtn{background:#95a5a6;color:#fff}
+    #nextBtn{background:#00a6fb;color:#fff}
+    #nextBtn:disabled{background:#95a5a6;cursor:not-allowed}
+    .score-display{font-weight:600;color:#0d3b66}
+
+    /* RESULTS */
+    .result-screen{
+      text-align:center;display:none;
+    }
+    .result-screen h2{font-size:2rem;margin-bottom:15px;color:#0d3b66}
+    .result-screen p{font-size:1.1rem;margin-bottom:20px;color:#444}
+    #restartBtn{background:#00a6fb;color:#fff;border:none;border-radius:25px;padding:12px 28px;font-size:1rem;cursor:pointer}
+
+    /* RESPONSIVE */
+    @media(max-width:600px){
+      .quiz-card{padding:25px 20px}
+      header h1{font-size:1.7rem}
+      .question-text{font-size:1.1rem}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background slideshow -->
+  <div class="bg-slideshow">
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1502780216537-1c3b0f2b1f1f?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="bg-slide" style="background-image:url('https://images.unsplash.com/photo-1502780216537-1c3b0f2b1f1f?auto=format&fit=crop&w=1350&q=80');"></div>
+  </div>
+  <div class="overlay"></div>
+
+  <!-- Quiz Card -->
+  <div class="quiz-card">
+    <header>
+      <h1>⚡ Renewable Energy Quiz</h1>
+      <p>Test your knowledge on clean energy sources & technologies</p>
+    </header>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="question-box">
+      <div class="question-text" id="questionText"></div>
+      <img class="question-img" id="questionImg" alt="question image">
+    </div>
+
+    <div class="options" id="optionsContainer"></div>
+
+    <div class="nav">
+      <button id="prevBtn" onclick="navigate(-1)">← Prev</button>
+      <span class="score-display">Score: <span id="score">0</span>/20</span>
+      <button id="nextBtn" onclick="navigate(1)" disabled>Next →</button>
+    </div>
+
+    <div class="result-screen" id="resultScreen">
+      <h2 id="resultTitle"></h2>
+      <p id="resultMsg"></p>
+      <button id="restartBtn" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+  </div>
+
+  <script>
+    /* ===== RENEWABLE ENERGY QUESTION BANK (20 Questions) ===== */
+    const questions=[
+      {
+        q:"Which renewable source currently provides the largest share of global renewable electricity?",
+        img:"https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=60",
+        opts:["Solar PV","Wind","Hydroelectric","Biomass"],
+        correct:2,
+        fact:"Hydropower generates ~16 % of world electricity—more than all other renewables combined."
+      },
+      {
+        q:"What does ‘PV’ stand for in solar PV panels?",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["Photo-voltaic","Power voltage","Photonic valve","Polarized vacuum"],
+        correct:0,
+        fact:"Photovoltaic cells convert sunlight directly into electricity via the photovoltaic effect."
+      },
+      {
+        q:"Which country leads the world in total installed wind power capacity?",
+        img:"https://images.unsplash.com/photo-1502780216537-1c3b0f2b1f1f?auto=format&fit=crop&w=800&q=60",
+        opts:["USA","China","Germany","India"],
+        correct:1,
+        fact:"China operates >40 % of global wind capacity as of 2023."
+      },
+      {
+        q:"What is the typical efficiency range of commercial silicon solar panels?",
+        img:"https://images.unsplash.com/photo-1502780216537-1c3b0f2b1f1f?auto=format&fit=crop&w=800&q=60",
+        opts:["5–10 %","15–22 %","30–35 %","45–50 %"],
+        correct:1,
+        fact:"Mainstream modules achieve 15–22 %; lab cells exceed 26 %."
+      },
+      {
+        q:"Which renewable technology can provide 24-hour (‘baseload’) power without extra storage?",
+        img:"https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=60",
+        opts:["Solar PV","Onshore wind","Geothermal","Tidal stream"],
+        correct:2,
+        fact:"Geothermal plants use Earth’s internal heat and run continuously irrespective of weather."
+      },
+      {
+        q:"What type of hydroelectric facility has the largest environmental footprint per kWh?",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["Run-of-river","Pumped storage","Large reservoir dam","Micro-hydro"],
+        correct:2,
+        fact:"Large dams flood habitats, alter rivers and emit methane from submerged vegetation."
+      },
+      {
+        q:"Modern wind turbines usually start generating electricity at wind speeds around:",
+        img:"https://images.unsplash.com/photo-1502780216537-1c3b0f2b1f1f?auto=format&fit=crop&w=800&q=60",
+        opts:["1 m/s","3 m/s","8 m/s","15 m/s"],
+        correct:1,
+        fact:"Cut-in speed is typically 3–4 m/s; rated power is reached ~12 m/s."
+      },
+      {
+        q:"Which renewable source uses inverters to convert DC to AC electricity?",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["Wind","Solar PV","Biomass","Hydro"],
+        correct:1,
+        fact:"Solar panels produce DC; inverters convert it to grid-compatible AC."
+      },
+      {
+        q:"What is the capacity factor of an offshore wind farm compared to onshore?",
+        img:"https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=60",
+        opts:["Lower","Similar","Higher","Much lower"],
+        correct:2,
+        fact:"Offshore wind averages ~40–50 % vs ~30–35 % onshore due to stronger, steadier winds."
+      },
+      {
+        q:"Which gas is produced when biomass is fermented in anaerobic digesters?",
+        img:"https://images.unsplash.com/photo-1502780216537-1c3b0f2b1f1f?auto=format&fit=crop&w=800&q=60",
+        opts:["Hydrogen","Methane","Carbon monoxide","Propane"],
+        correct:1,
+        fact:"Biogas is ~60 % CH₄ (methane) and 40 % CO₂—usable for heat/electricity."
+      },
+      {
+        q:"Concentrated solar power (CSP) plants use:",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["Photovoltaic cells","Mirrors to focus heat","Chemical reactions","Wind-driven generators"],
+        correct:1,
+        fact:"CSP uses mirrors/ lenses to concentrate sunlight, heating fluid to drive turbines."
+      },
+      {
+        q:"What is the main advantage of distributed rooftop solar?",
+        img:"https://images.unsplash.com/photo-1502780216537-1c3b0f2b1f1f?auto=format&fit=crop&w=800&q=60",
+        opts:["No land-use conflict","Higher efficiency","Lower cost","No need for inverters"],
+        correct:0,
+        fact:"Rooftop systems utilise existing structures, avoiding additional land use."
+      },
+      {
+        q:"Which renewable resource can be affected by drought and seasonal flow changes?",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["Wind","Hydro","Geothermal","Tidal"],
+        correct:1,
+        fact:"Hydropower output drops when river flows decrease due to drought or seasonal variation."
+      },
+      {
+        q:"Levelised Cost of Energy (LCOE) for solar and wind has:",
+        img:"https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=60",
+        opts:["Remained high","Decreased significantly","Stayed flat","Increased"],
+        correct:1,
+        fact:"Since 2010 utility-scale solar LCOE has fallen ~85 % and onshore wind ~50 %."
+      },
+      {
+        q:"What is ‘curtailment’ in wind/solar power?",
+        img:"https://images.unsplash.com/photo-1502780216537-1c3b0f2b1f1f?auto=format&fit=crop&w=800&q=60",
+        opts:["Over-speeding turbines","Reducing output below available resource","Upgrading panels","Recycling blades"],
+        correct:1,
+        fact:"Grid operators may curtail (reduce) output when supply exceeds demand or transmission limits."
+      },
+      {
+        q:"Which storage technology is most commonly paired with large solar farms today?",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["Pumped hydro","Lead-acid batteries","Lithium-ion batteries","Compressed air"],
+        correct:2,
+        fact:"Lithium-ion battery costs have dropped ~90 % since 2010, making 4-hour storage economical."
+      },
+      {
+        q:"Tidal energy exploits:",
+        img:"https://images.unsplash.com/photo-1502780216537-1c3b0f2b1f1f?auto=format&fit=crop&w=800&q=60",
+        opts:["Surface waves","Ocean thermal gradients","Gravitational pull of moon/sun","Wind over oceans"],
+        correct:2,
+        fact:"Tidal ranges and currents are driven by lunar and solar gravitational forces."
+      },
+      {
+        q:"Green hydrogen is produced by:",
+        img:"https://images.unsplash.com/photo-1502780402662-acc019172495?auto=format&fit=crop&w=800&q=60",
+        opts:["Steam reforming natural gas","Electrolysis using renewable electricity","Coal gasification","Biomass combustion"],
+        correct:1,
+        fact:"Electrolysis splits water into H₂ and O₂; when powered by renewables the hydrogen is ‘green’."
+      },
+      {
+        q:"What is the fastest-growing renewable electricity source globally (by % annual additions)?",
+        img:"https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=60",
+        opts:["Wind","Solar PV","Geothermal","Ocean"],
+        correct:1,
+        fact:"Solar PV has averaged >20 % annual growth over the past decade, the fastest among renewables."
+      }
+    ];
+
+    /* ===== QUIZ LOGIC ===== */
+    let idx=0,score=0,selected=null,answered=false;
+
+    function loadQ(){
+      answered=false;selected=null;
+      const q=questions[idx];
+      document.getElementById('questionText').textContent=q.q;
+      document.getElementById('questionImg').src=q.img;
+      const container=document.getElementById('optionsContainer');
+      container.innerHTML='';
+      q.opts.forEach((opt,i)=>{
+        const btn=document.createElement('button');
+        btn.className='option-btn';btn.textContent=opt;btn.onclick=()=>select(i);
+        container.appendChild(btn);
+      });
+      updateNav();
+    }
+    function select(i){
+      if(answered)return;
+      answered=true;selected=i;
+      const q=questions[idx];
+      const btns=document.querySelectorAll('.option-btn');
+      btns.forEach((b,idx)=>{
+        b.disabled=true;
+        if(idx===q.correct)b.classList.add('correct');
+        else if(idx===i)b.classList.add('incorrect');
+      });
+      if(i===q.correct)score++;
+      document.getElementById('score').textContent=score;
+    }
+    function navigate(dir){
+      if(dir===1&&!answered)return;
+      idx=Math.max(0,Math.min(questions.length-1,idx+dir));
+      if(idx===questions.length-1)showResult();
+      else loadQ();
+    }
+    function updateNav(){
+      document.getElementById('prevBtn').disabled=idx===0;
+      document.getElementById('nextBtn').disabled=!answered;
+      document.getElementById('progressFill').style.width=`${(idx+1)/questions.length*100}%`;
+    }
+    function showResult(){
+      document.getElementById('questionContainer').style.display='none';
+      document.querySelector('.nav').style.display='none';
+      const res=document.getElementById('resultScreen');
+      res.style.display='block';
+      const pct=Math.round(score/questions.length*100);
+      let msg='';
+      if(pct>=90)msg='Outstanding clean-energy expert! ⚡';
+      else if(pct>=70)msg='Great job, renewable champion! 🌱';
+      else if(pct>=50)msg='Good effort—keep learning! 📚';
+      else msg='Stay curious about renewables! 🌞';
+      document.getElementById('resultTitle').textContent=`You scored ${score}/20 (${pct}%)`;
+      document.getElementById('resultMsg').textContent=msg;
+    }
+    function restartQuiz(){location.reload();}
+
+    /* ===== INIT ===== */
+    loadQ();
+  </script>
+</body>
+</html>
