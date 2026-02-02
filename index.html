@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoLearn - Learn Environmental Science Through Games</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --light-green: #d5f4e6;
+            --accent-blue: #3498db;
+            --warning-orange: #f39c12;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-green);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-green);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: var(--primary-green);
+            color: var(--white);
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            padding: 4rem 5%;
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--white) 100%);
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-text .highlight {
+            color: var(--primary-green);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-text .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            background: rgba(46, 204, 113, 0.3);
+            z-index: -1;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .hero-image {
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .floating-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .floating-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .floating-card h3 {
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .floating-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 5%;
+            background: var(--white);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary-green);
+            border-radius: 2px;
+        }
+
+        .section-header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 2rem auto 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary-green);
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-green);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--light-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: var(--primary-green);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--primary-green);
+            color: var(--white);
+            transform: scale(1.1);
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Games Section */
+        .games {
+            padding: 5rem 5%;
+            background: linear-gradient(135deg, #f8f9fa 0%, var(--light-green) 100%);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .game-image {
+            height: 200px;
+            background: linear-gradient(45deg, var(--primary-green), var(--accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--warning-orange);
+            color: var(--white);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .game-content {
+            padding: 1.5rem;
+        }
+
+        .game-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .game-content p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .difficulty {
+            display: flex;
+            gap: 0.2rem;
+        }
+
+        .star {
+            color: #ffd700;
+        }
+
+        .play-button {
+            background: var(--primary-green);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .play-button:hover {
+            background: var(--dark-green);
+            transform: scale(1.05);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            padding: 5rem 5%;
+            background: var(--white);
+        }
+
+        .progress-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .progress-content h2 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .progress-content p {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .achievement-list {
+            list-style: none;
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--light-green);
+            border-radius: 15px;
+            transition: var(--transition);
+        }
+
+        .achievement-item:hover {
+            background: rgba(46, 204, 113, 0.2);
+            transform: translateX(10px);
+        }
+
+        .achievement-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.2rem;
+        }
+
+        .achievement-text h4 {
+            color: var(--text-dark);
+            margin-bottom: 0.2rem;
+        }
+
+        .achievement-text p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .progress-visual {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .level-indicator {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .level-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-green) 0deg 216deg, #e0e0e0 216deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            position: relative;
+        }
+
+        .level-circle::before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            background: var(--white);
+            border-radius: 50%;
+        }
+
+        .level-text {
+            position: relative;
+            z-index: 1;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .progress-bars {
+            margin-top: 2rem;
+        }
+
+        .progress-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-green);
+            border-radius: 5px;
+            transition: width 1s ease;
+        }
+
+        /* Newsletter Section */
+        .newsletter {
+            padding: 4rem 5%;
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            color: var(--white);
+            text-align: center;
+        }
+
+        .newsletter-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .newsletter h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .newsletter-button {
+            background: var(--white);
+            color: var(--primary-green);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .newsletter-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: var(--white);
+            padding: 3rem 5%;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: var(--primary-green);
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-green);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .progress-container {
+                grid-template-columns: 1fr;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .stats {
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Particle Animation */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--primary-green);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: particle-float 20s infinite linear;
+        }
+
+        @keyframes particle-float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                EcoLearn
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#games">Games</a></li>
+                <li><a href="#learn">Learn</a></li>
+                <li><a href="#progress">Progress</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="certifications.html">certifications</a></li>
+                <li><a href="quiz.html">quiz</a></li>
+                <li><a href="eco rewards.html">eco rewards</a></li>
+            </ul>
+            <a href="login page.html" class="cta-button">Start Learning</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="particles" id="particles"></div>
+        <div class="hero-content">
+            <div class="hero-text fade-in">
+                <h1>Save the Planet While <span class="highlight">Playing Games</span></h1>
+                <p>Join thousands of eco-warriors learning about environmental science through interactive games, challenges, and real-world missions. Every action counts!</p>
+                <div class="hero-buttons">
+                    <a href="#games" class="cta-button">Play Now</a>
+                    <a href="#learn" class="cta-button" style="background: transparent; color: var(--primary-green); border: 2px solid var(--primary-green);">Learn More</a>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-number" data-target="50000">0</span>
+                        <span class="stat-label">Active Players</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-target="1000">0</span>
+                        <span class="stat-label">Trees Planted</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-target="50000">0</span>
+                        <span class="stat-label">CO2 Saved (kg)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image fade-in">
+                <div class="floating-card">
+                    <h3><i class="fas fa-gamepad"></i> Climate Quest</h3>
+                    <p>Complete missions to reduce carbon emissions in your virtual city!</p>
+                </div>
+                <div class="floating-card">
+                    <h3><i class="fas fa-recycle"></i> Waste Warrior</h3>
+                    <p>Master the art of recycling and waste management through fun challenges.</p>
+                </div>
+                <div class="floating-card">
+                    <h3><i class="fas fa-seedling"></i> Forest Builder</h3>
+                    <p>Grow your own virtual forest while learning about biodiversity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="learn">
+        <div class="section-header fade-in">
+            <h2>Why Choose EcoLearn?</h2>
+            <p>Experience the perfect blend of education and entertainment with our innovative learning platform</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3>Gamified Learning</h3>
+                <p>Earn points, badges, and rewards as you complete environmental challenges and level up your eco-knowledge.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Community Challenges</h3>
+                <p>Join forces with players worldwide to tackle real environmental issues and create lasting impact.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Expert Content</h3>
+                <p>Learn from environmental scientists and educators through carefully crafted lessons and activities.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Track Progress</h3>
+                <p>Monitor your learning journey with detailed analytics and personalized learning paths.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>Real Impact</h3>
+                <p>See how your virtual actions translate to real-world environmental benefits and conservation efforts.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Learn Anywhere</h3>
+                <p>Access EcoLearn on any device - perfect for learning at home, school, or on the go.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Games Section -->
+    <section class="games" id="games">
+        <div class="section-header fade-in">
+            <h2>Popular Eco-Games</h2>
+            <p>Start your environmental adventure with our most popular educational games</p>
+        </div>
+        <div class="games-grid">
+            <div class="game-card fade-in">
+                <div class="game-image">
+                    <i class="fas fa-city"></i>
+                    <span class="game-badge">NEW</span>
+                </div>
+                <div class="game-content">
+                    <h3>Green City Builder</h3>
+                    <p>Design and manage your own sustainable city while balancing environmental and economic needs.</p>
+                    <div class="game-meta">
+                        <div class="difficulty">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <a href="Green City Builder.html" class="play-button">Play Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="game-card fade-in">
+                <div class="game-image">
+                    <i class="fas fa-water"></i>
+                    <span class="game-badge">HOT</span>
+                </div>
+                <div class="game-content">
+                    <h3>Ocean Guardian</h3>
+                    <p>Protect marine ecosystems by cleaning oceans and saving endangered sea creatures.</p>
+                    <div class="game-meta">
+                        <div class="difficulty">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <a href="ocean gurdian game.html" class="play-button">Play Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="game-card fade-in">
+                <div class="game-image">
+                    <i class="fas fa-solar-panel"></i>
+                </div>
+                <div class="game-content">
+                    <h3>Energy Revolution</h3>
+                    <p>Learn about renewable energy sources and build your own sustainable power grid.</p>
+                    <div class="game-meta">
+                        <div class="difficulty">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <a href="energy game.html" class="play-button">Play Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="game-card fade-in">
+                <div class="game-image">
+                    <i class="fas fa-bug"></i>
+                </div>
+                <div class="game-content">
+                    <h3>Biodiversity Quest</h3>
+                    <p>Explore different ecosystems and help preserve biodiversity through interactive missions.</p>
+                    <div class="game-meta">
+                        <div class="difficulty">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                        </div>
+                        <a href="biodiversity quest.html" class="play-button">Play Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Progress Section -->
+    <section class="progress-section" id="progress">
+        <div class="progress-container">
+            <div class="progress-content fade-in">
+                <h2>Track Your Environmental Impact</h2>
+                <p>Watch your knowledge grow and see how your actions contribute to a healthier planet. Every achievement brings us closer to a sustainable future.</p>
+                <ul class="achievement-list">
+                    <li class="achievement-item">
+                        <div class="achievement-icon">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <div class="achievement-text">
+                            <h4>Eco Champion</h4>
+                            <p>Completed 50 environmental challenges</p>
+                        </div>
+                    </li>
+                    <li class="achievement-item">
+                        <div class="achievement-icon">
+                            <i class="fas fa-tree"></i>
+                        </div>
+                        <div class="achievement-text">
+                            <h4>Forest Guardian</h4>
+                            <p>Planted 100 virtual trees</p>
+                        </div>
+                    </li>
+                    <li class="achievement-item">
+                        <div class="achievement-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="achievement-text">
+                            <h4>Knowledge Seeker</h4>
+                            <p>Mastered 10 environmental topics</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="progress-visual fade-in">
+                <div class="level-indicator">
+                    <div class="level-circle">
+                        <div class="level-text">Level 7</div>
+                    </div>
+                    <h3>8,250 XP to Next Level</h3>
+                </div>
+                <div class="progress-bars">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Climate Science</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Biodiversity</span>
+                            <span>72%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 72%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Sustainable Energy</span>
+                            <span>68%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 68%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Waste Management</span>
+                            <span>91%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 91%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter">
+        <div class="newsletter-content fade-in">
+            <h2>Join the Eco-Revolution</h2>
+            <p>Get the latest environmental tips, new game releases, and exclusive challenges delivered to your inbox!</p>
+            <form class="newsletter-form">
+                <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+                <button type="submit" class="newsletter-button">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Us</a>
+                <a href="#">For Educators</a>
+                <a href="#">API</a>
+                <a href="#">Support</a>
+            </div>
+            <p>&copy; 2024 EcoLearn. Educating today for a greener tomorrow.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Counter Animation
+        function animateCounter(element, target, duration = 2000) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Animate counters when stats section is visible
+                    if (entry.target.classList.contains('hero-text')) {
+                        const counters = document.querySelectorAll('.stat-number');
+                        counters.forEach(counter => {
+                            const target = parseInt(counter.getAttribute('data-target'));
+                            animateCounter(counter, target);
+                        });
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Particle Animation
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size between 5px and 15px
+                const size = Math.random() * 10 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}%`;
+                
+                // Random animation delay
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                
+                // Random animation duration
+                particle.style.animationDuration = `${Math.random() * 20 + 10}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.backdropFilter = 'blur(10px)';
+            } else {
+                header.style.background = 'var(--white)';
+                header.style.backdropFilter = 'none';
+            }
+        });
+
+        // Game card interactions
+        document.querySelectorAll('.play-button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                setTimeout(() => {
+                    this.innerHTML = 'Play Now';
+                    alert('Game would launch here! 🎮🌱');
+                }, 1000);
+            });
+        });
+
+        // Newsletter form
+        document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const button = this.querySelector('.newsletter-button');
+            const input = this.querySelector('.newsletter-input');
+            
+            button.innerHTML = '<i class="fas fa-check"></i> Subscribed!';
+            button.style.background = '#27ae60';
+            input.value = '';
+            
+            setTimeout(() => {
+                button.innerHTML = 'Subscribe';
+                button.style.background = 'var(--white)';
+            }, 3000);
+        });
+
+        // Achievement item hover effect
+        document.querySelectorAll('.achievement-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(15px) scale(1.02)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0) scale(1)';
+            });
+        });
+
+        // Initialize particles
+        createParticles();
+
+        // Add some interactive elements
+        document.querySelectorAll('.floating-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+
+        // Progress bar animation on scroll
+        const progressObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const progressFills = entry.target.querySelectorAll('.progress-fill');
+                    progressFills.forEach(fill => {
+                        const width = fill.style.width;
+                        fill.style.width = '0';
+                        setTimeout(() => {
+                            fill.style.width = width;
+                        }, 100);
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const progressSection = document.querySelector('.progress-visual');
+        if (progressSection) {
+            progressObserver.observe(progressSection);
+        }
+    </script>
+</body>
+</html>
